@@ -580,7 +580,7 @@ def gate_policy() -> dict:
                       "window_min": config.BURST_WINDOW_S // 60},
         },
         "sweep": {k: sweep.get(k) for k in ("n_val", "true_high_incidents", "rule", "n_combinations",
-                                            "n_meeting_rule", "chosen", "previous_p3_setting")} | {"previous": sweep.get("previous_p3_setting")},
+                                            "n_meeting_rule", "chosen", "previous_setting")} | {"previous": sweep.get("previous_setting")},
         "points": points,
     }
 
@@ -607,7 +607,7 @@ def metrics() -> dict:
     total = len(items)
     escalated = sum(1 for t in items if t["escalated"])
     auto = total - escalated
-    tm, gs = _read_json("triage_metrics.json"), _read_json("gate_sweep.json")
+    tm = _read_json("triage_metrics.json")
     burst_ids = [t["id"] for t in items if t["triage"].get("burst", {}).get("active")]
     return {
         "mode": MODE,
@@ -622,8 +622,6 @@ def metrics() -> dict:
         "kpi": {
             "high_priority_incident_recall":
                 tm.get("high_priority_incident", {}).get("recall_predicted_high_and_incident"),
-            "high_incident_escalated": gs.get("chosen", {}).get("high_incident_escalated"),
-            "auto_share_validation": gs.get("chosen", {}).get("auto_share"),
         },
         "major_incident": {"active": bool(burst_ids), "ticket_ids": burst_ids},
         # holdout model numbers (scripts/evaluate.py) and the problem database

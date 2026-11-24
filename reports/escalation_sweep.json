@@ -4,7 +4,7 @@
   "rule": "high_incident_escalated >= 0.95 and auto_queue_accuracy >= 0.75, then max auto_share",
   "n_combinations": 1944,
   "n_meeting_rule": 238,
-  "previous_p3_setting": {
+  "previous_setting": {
     "critical": null,
     "type": 0.75,
     "queue": 0.5,

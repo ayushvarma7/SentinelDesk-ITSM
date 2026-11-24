@@ -289,7 +289,7 @@ run.sh              setup, test, eval, app
 ```
 
 For the full design write-up (data findings, retrieval and gate decisions, how to retrain), see
-[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) or the [HTML version](docs/architecture.html).
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Credits
 

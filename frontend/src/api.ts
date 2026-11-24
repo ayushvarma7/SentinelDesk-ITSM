@@ -86,7 +86,7 @@ export interface Metrics {
   mode: string; total: number; auto_resolved: number; escalated: number
   escalation_rate: number; avg_latency_ms: number
   by_priority: Record<string, number>; by_queue: Record<string, number>; by_status: Record<string, number>
-  kpi: { high_priority_incident_recall: number | null; high_incident_escalated: number | null; auto_share_validation: number | null }
+  kpi: { high_priority_incident_recall: number | null }
   major_incident: { active: boolean; ticket_ids: string[] }
   model?: {
     n_holdout: number | null

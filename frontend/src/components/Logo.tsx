@@ -1,4 +1,4 @@
-/** SentinelDesk mark: red shield with a pulse line (assets/mark.svg). Same artwork as public/favicon.svg. */
+/** SentinelDesk mark: red shield with a pulse line. Same artwork as public/favicon.svg. */
 export function LogoMark({ size = 32 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 44 44" aria-hidden="true">
@@ -8,7 +8,7 @@ export function LogoMark({ size = 32 }: { size?: number }) {
   )
 }
 
-/** Wordmark for the dark header (assets/logo.svg: mark + white "SentinelDesk"). */
+/** Wordmark for the dark header (mark + white "SentinelDesk"). */
 export function Logo() {
   return (
     <div className="flex items-center gap-2">

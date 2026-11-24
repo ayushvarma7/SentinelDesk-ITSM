@@ -9,7 +9,7 @@ Incidents the classifier mislabels. That escalated nearly every routine hand-typ
 escalates on P(high) x P(Incident or Problem) directly, so the floors can go back to meaning
 "the model is unsure".
 
-Same validation set-up as scripts/gate_sweep.py: held-out KB slice, real retrieve.search() with the
+Validation set-up: held-out KB slice, real retrieve.search() with the
 ticket's own row removed, fixed hand-typed similarity floors.
 
 Selection rule, fixed BEFORE the sweep ran:
@@ -39,7 +39,8 @@ GRID = {"critical": (None, 0.10, 0.15, 0.20, 0.25, 0.30, 0.35, 0.40, 0.50),
         "type": (0.0, 0.35, 0.45, 0.55, 0.65, 0.75),
         "queue": (0.0, 0.20, 0.25, 0.30, 0.40, 0.50),
         "priority": (0.0, 0.30, 0.40, 0.50, 0.60, 0.70)}
-P3_CHOSEN = {"critical": None, "type": 0.75, "queue": 0.50, "priority": 0.70}
+# The gate before the critical-score rule (confidence floors only), scored again for the comparison chart.
+PREVIOUS_SETTING = {"critical": None, "type": 0.75, "queue": 0.50, "priority": 0.70}
 OFF = {"min_confidence": {"type": 0.0, "queue": 0.0, "priority": 0.0}, "critical_score_min": None}
 
 
@@ -99,7 +100,7 @@ def main() -> None:
     ok = df[(df.high_incident_escalated >= 0.95) & (df.auto_queue_accuracy >= 0.75)]
     best = ok.sort_values(["auto_share", "auto_queue_accuracy"], ascending=False).iloc[0].to_dict()
     best = {k: (None if (k == "critical" and (best[k] is None or pd.isna(best[k]))) else best[k]) for k in best}
-    p3 = score(P3_CHOSEN)[0]
+    previous = score(PREVIOUS_SETTING)[0]
 
     # Re-check the chosen setting through the real gate, ticket by ticket.
     chosen = {k: best[k] for k in GRID}
@@ -113,11 +114,11 @@ def main() -> None:
     summary = {"n_val": int(len(val)), "true_high_incidents": int(true_hi.sum()),
                "rule": "high_incident_escalated >= 0.95 and auto_queue_accuracy >= 0.75, then max auto_share",
                "n_combinations": len(df), "n_meeting_rule": int(len(ok)),
-               "previous_p3_setting": p3, "chosen": best,
+               "previous_setting": previous, "chosen": best,
                "verified_against_gate_evaluate": True}
     (REPORTS / "escalation_sweep.json").write_text(json.dumps(summary, indent=2, default=float))
     print(f"[sweep] {len(df)} combinations, {len(ok)} meet the rule")
-    print(f"[sweep] previous : {p3}")
+    print(f"[sweep] previous : {previous}")
     print(f"[sweep] CHOSEN        : {best}")
     print(ok.sort_values(["auto_share", "auto_queue_accuracy"], ascending=False).head(8).to_string(index=False))
 

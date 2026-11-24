@@ -190,24 +190,7 @@ Incidents. Recovering that with confidence floors meant escalating ~70% of all t
 of hand-typed benign tickets. Keying on the probability of the dangerous class gets the same
 safety at 42% escalation and 14% benign loss.
 
-### The calibration frontier
-
-100 threshold settings scored against two distributions at once — the 2,286-ticket validation
-slice where labels exist, and 22 hand-written tickets where they do not
-(`tests/handtyped_calibration.json`). All 100 stopped all 8 critical and adversarial tickets,
-so the hard rules carry that regardless of thresholds.
-
-| queue floor | high-Inc escalated | hand-typed drafted | val auto-draft | auto queue accuracy |
-|---:|---:|---:|---:|---:|
-| 0.00 | 0.884 | 0.678 | 0.629 | 0.619 |
-| 0.15 | 0.884 | 0.678 | 0.629 | 0.619 |
-| 0.25 | 0.884 | 0.572 | 0.621 | 0.623 |
-| 0.35 | 0.904 | 0.536 | 0.553 | 0.663 |
-| **0.50** | **0.946** | **0.357** | **0.408** | **0.749** |
-
-No setting reaches the 0.95 safety clause; the ceiling is 0.946. `critical_score_min` is inert
-from 0.05 to 0.30 at the current queue floor. **The queue confidence floor is the only knob
-that moves anything.**
+### Why the similarity floors are hand-calibrated
 
 **Why the dataset's own percentiles are the wrong basis.** Holdout top-1 p10 is 0.9186, but
 all 8 hand-typed tickets measured below it. The dataset is synthetic and its tickets sit
@@ -228,7 +211,7 @@ The inference path cannot read a label because the columns are not in the frame 
 
 Test tickets **are** embedded on every evaluation — encoded, searched with, discarded.
 Embedding is a read; indexing is the write that never happens. The index holds exactly the
-22,863 KB rows, with **zero holdout ids inside it**. `gate_sweep.py` additionally removes each
+22,863 KB rows, with **zero holdout ids inside it**. `escalation_sweep.py` additionally removes each
 validation ticket's own row from its own results, since a ticket retrieving itself is
 self-match contamination even without crossing the split.
 
@@ -321,8 +304,6 @@ scikit-learn versions.
 | `scripts/evaluate.py` | `reports/triage_metrics.json` — heads, gate, retrieval, latency |
 | `scripts/retrieval_check.py` | `reports/retrieval_check.json` — similarity percentiles |
 | `scripts/draft_eval.py` | `reports/draft_eval.json` — citation and grounding metrics |
-| `scripts/gate_sweep.py` | `reports/gate_sweep.json` — first threshold sweep on validation |
 | `scripts/escalation_sweep.py` | `reports/escalation_sweep.json` — the sweep behind the live gate setting |
-| `scripts/gate_calibrate.py` | `reports/gate_calibrate.json` — thresholds on both distributions |
 | `scripts/attack_table.py` | `reports/attack_table.md` — 26 adversarial cases |
 | `scripts/demo_live_kb.py` | Walks the frozen/live learning loop end to end |

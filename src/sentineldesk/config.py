@@ -112,11 +112,12 @@ KB_LEX_PATH = ARTIFACTS / "kb_tfidf.npz"            # keyword index, row-aligned
 MIN_TOP1_SIMILARITY = 0.8650
 MIN_MEAN_TOP3_SIMILARITY = 0.8450
 #
-# Confidence floors: chosen by scripts/gate_sweep.py on the 10% KB validation slice (never the
+# Confidence floors: chosen by scripts/escalation_sweep.py on the 10% KB validation slice (never the
 # holdout), through the real retrieve.search(), under the fixed similarity floors above, with a
-# rule fixed before the sweep: >=95% of high-priority Incidents escalated, >=25% auto-drafted, then
-# max queue accuracy on auto-drafted tickets. Result (reports/gate_sweep.json): 25.2% auto-drafted,
-# 97.0% of high Incidents escalated, auto-drafted queue accuracy 0.815 vs 0.609 overall.
+# rule fixed before the sweep: >=95% of high-priority Incidents escalated and >=0.75 queue accuracy
+# on auto-drafted tickets, then the most auto-drafting. Result (reports/escalation_sweep.json):
+# 37.5% auto-drafted, 95.1% of high Incidents escalated, auto-drafted queue accuracy 0.751 vs 0.609
+# overall.
 MIN_CONFIDENCE = {
     "type": 0.0,
     "queue": 0.50,      # 10 classes at 21x imbalance; queue ECE 0.012, so this floor is meaningful

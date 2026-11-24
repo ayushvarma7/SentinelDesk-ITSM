@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react'
-import { X, FileText } from 'lucide-react'
+import { X } from 'lucide-react'
 import type { Precedent, Priority } from './api'
 import { STATUS_DE, useT, LangContext } from './i18n'
 import { useContext } from 'react'
@@ -82,26 +82,6 @@ export function SlaCountdown({ due, done }: { due: string; done?: boolean }) {
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`rounded-xl border border-slate-200 bg-white shadow-sm ${className}`}>{children}</div>
-}
-
-/** Renders a reply, turning [TKT-12345] markers into clickable chips. */
-export function CitedText({ text, precedents, onOpen }: { text: string; precedents: Precedent[]; onOpen: (p: Precedent) => void }) {
-  const parts = text.split(/(\[(?:TKT|LIVE)-\d{5}\])/g)
-  return (
-    <p className="whitespace-pre-wrap leading-relaxed text-slate-800">
-      {parts.map((part, i) => {
-        const m = part.match(/^\[((?:TKT|LIVE)-\d{5})\]$/)
-        if (!m) return <span key={i}>{part}</span>
-        const p = precedents.find(x => x.ticket_id === m[1])
-        return (
-          <button key={i} type="button" onClick={() => p && onOpen(p)} disabled={!p}
-            className="mx-0.5 inline-flex items-center gap-1 rounded-md bg-navy/5 px-1.5 py-0.5 align-baseline font-mono text-xs font-semibold text-navy ring-1 ring-navy/20 hover:bg-navy hover:text-white disabled:opacity-50">
-            <FileText size={11} />{m[1]}
-          </button>
-        )
-      })}
-    </p>
-  )
 }
 
 export function PrecedentModal({ p, onClose }: { p: Precedent | null; onClose: () => void }) {

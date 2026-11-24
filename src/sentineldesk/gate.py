@@ -129,7 +129,7 @@ def evaluate_detailed(
     "review" -> HUMAN_REVIEW with a draft for a human to approve.
 
     thresholds may override min_confidence / min_top1_similarity / min_mean_top3_similarity
-    (the console's sliders and scripts/gate_sweep.py use this).
+    (scripts/escalation_sweep.py uses this).
     burst is the burst detector's state for this ticket ({"active": bool, "related": [...]}).
     """
     t = thresholds or {}
