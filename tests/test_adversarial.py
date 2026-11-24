@@ -1,4 +1,4 @@
-"""25 adversarial tickets against the pure gate functions (no models needed).
+"""26 adversarial and look-alike tickets against the pure gate functions (no models needed).
 
     PYTHONPATH=src python tests/test_adversarial.py      # or: pytest tests/
 

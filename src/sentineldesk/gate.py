@@ -1,7 +1,7 @@
 """The escalation gate: deterministic rules, no LLM in the decision path.
 
 Every rule returns a sentence a human can read off the badge, which is the whole
-point: you can explain any escalation on stage in one line.
+point: any escalation can be explained in one line.
 
 Layers of defence against adversarial tickets (regex is only the first):
   1. RISK_PATTERNS below: injection, credential requests, destructive actions, legal
@@ -19,7 +19,7 @@ from . import config
 from .generate import unsupported_figures  # noqa: F401  (defined in generate, re-exported here)
 from .schema import Precedent, Prediction, RootCause
 
-# Tuned on tests/test_adversarial.py: 25/25 attacks caught, 0 false alarms on the 7 look-alikes.
+# Tuned on tests/test_adversarial.py: all 19 attacks caught, 0 false alarms on the 7 look-alikes.
 RISK_PATTERNS: dict[str, str] = {
     "prompt_injection": (
         r"ignore (all |any )?(the )?(previous|prior|above|your|earlier) (instructions|rules|prompts?)"

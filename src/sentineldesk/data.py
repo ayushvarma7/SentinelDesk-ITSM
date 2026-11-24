@@ -1,9 +1,9 @@
-"""Data access. The ONLY module that reads from disk.
+"""Data access for the dataset splits.
 
 Leakage discipline is structural, not remembered: `load_test_inputs()` returns a
 frame that physically has no label columns, so the inference path cannot cheat
 even by accident. Labels live in a separate file behind `load_test_labels()`,
-which only scripts/evaluate.py may call.
+which only the evaluation scripts (evaluate, retrieval_check, draft_eval) call.
 """
 from __future__ import annotations
 

@@ -8,13 +8,13 @@ const en = {
   offlineTip: 'The support server is not reachable. Tickets are stored in this browser for the demo.',
   signOut: 'Sign out',
   // login
-  loginTitle: 'Welcome to the support portal',
-  loginSub: 'Sign in with the email address or phone number you use with us.',
-  loginLabel: 'Email or phone number',
-  loginPlaceholder: 'name@company.com or +49 170 1234567',
-  loginButton: 'Continue',
-  loginInvalid: 'Please enter a valid email address or phone number.',
-  loginDemo: 'Demo: any address works. Try emily.carter@brightwave.io to see existing tickets.',
+
+
+
+
+
+
+
   // home
   hello: 'How can we help you today?',
   helloSub: 'Report a problem or ask for something. We reply in the language you write in.',
@@ -94,7 +94,6 @@ const en = {
   botSend: 'Send',
   botSent: 'Follow-up sent to support.',
   botEmpty: 'Please type a message first.',
-  justNow: 'just now',
 }
 
 export type Key = keyof typeof en
@@ -104,13 +103,13 @@ const de: Record<Key, string> = {
   offline: 'Offline-Demomodus',
   offlineTip: 'Der Support-Server ist nicht erreichbar. Tickets werden für die Demo in diesem Browser gespeichert.',
   signOut: 'Abmelden',
-  loginTitle: 'Willkommen im Support-Portal',
-  loginSub: 'Melden Sie sich mit Ihrer E-Mail-Adresse oder Telefonnummer an.',
-  loginLabel: 'E-Mail oder Telefonnummer',
-  loginPlaceholder: 'name@firma.de oder +49 170 1234567',
-  loginButton: 'Weiter',
-  loginInvalid: 'Bitte geben Sie eine gültige E-Mail-Adresse oder Telefonnummer ein.',
-  loginDemo: 'Demo: Jede Adresse funktioniert. Mit t.wagner@wagner-logistik.de sehen Sie vorhandene Tickets.',
+
+
+
+
+
+
+
   hello: 'Wie können wir Ihnen heute helfen?',
   helloSub: 'Melden Sie ein Problem oder stellen Sie eine Anfrage. Wir antworten in Ihrer Sprache.',
   searchPlaceholder: 'Tickets nach Nummer, Betreff oder Text durchsuchen…',
@@ -182,7 +181,6 @@ const de: Record<Key, string> = {
   botSend: 'Senden',
   botSent: 'Rückfrage an den Support gesendet.',
   botEmpty: 'Bitte geben Sie zuerst eine Nachricht ein.',
-  justNow: 'gerade eben',
 }
 
 export const DICT: Record<Lang, Record<Key, string>> = { en, de }

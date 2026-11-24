@@ -128,7 +128,7 @@ function Shell() {
             <WifiOff size={16} />{t('apiDown')} <code className="font-mono">{API_BASE}</code> — run <code className="font-mono">./run.sh app</code>
           </div>
         )}
-        {screen === 'tickets' && <Tickets tickets={tickets} reload={reload} onUpdate={onUpdate} loading={loading}
+        {screen === 'tickets' && <Tickets kb={metrics?.kb_tickets ?? null} tickets={tickets} reload={reload} onUpdate={onUpdate} loading={loading}
           openId={openId} setOpenId={setOpenId} replay={replay} />}
         {screen === 'dashboard' && <Dashboard m={metrics} tickets={tickets} />}
         {screen === 'problems' && <Problems openId={problemId} setOpenId={setProblemId} onOpenTicket={id => { setScreen('tickets'); setOpenId(id) }} />}

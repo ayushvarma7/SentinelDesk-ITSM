@@ -53,7 +53,7 @@ def build_index(show_progress: bool = True) -> None:
 
 
 def load_index() -> dict:
-    """Load once and keep it. Streamlit should call this at startup."""
+    """Load once and keep it. Call this once at startup."""
     global _INDEX
     if _INDEX is None:
         if not config.KB_EMB_PATH.exists():

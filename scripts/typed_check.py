@@ -3,7 +3,7 @@
     PYTHONPATH=src python scripts/typed_check.py            # current config
     SD_GATE=p3 PYTHONPATH=src python scripts/typed_check.py # the earlier gate floors, for comparison
 
-Judges type their own tickets, and hand-typed text scores differently from the synthetic dataset
+People type their own tickets, and hand-typed text scores differently from the synthetic dataset
 (lower similarity, lower queue confidence). This set is a CHECK, never used to pick thresholds:
 thresholds come from the validation sweeps. Written by hand for this purpose; not from the holdout.
 """

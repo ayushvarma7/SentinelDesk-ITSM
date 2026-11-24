@@ -34,7 +34,7 @@ customer portal where students and staff sign in, report an incident or make a r
 
 **Admin console** (`frontend/`, http://localhost:5173): the service-desk queue with priority, assignment group and SLA
 countdown. Opening a ticket shows each step of the agent run (PII mask, triage, gate, retrieval, draft, verification),
-why the ticket was escalated, and the recommended reply. Agents approve, edit, reject or reassign. Other tabs hold a
+why the ticket was escalated, and the recommended reply. Agents approve, edit, reject, take a ticket or override the AI draft. Other tabs hold a
 dashboard, **Problems** (recurring issues grouped across tickets) and the **Rules** page where admins set the routing
 policy.
 
@@ -47,7 +47,7 @@ approved reply in the portal.
 
 ## Quick start
 
-You need Python 3.12, Node.js 20 or later, about 2 GB of disk, and about 10 minutes the first time.
+You need Python 3.12, Node.js 20.19 or later (or 22.12+), about 2 GB of disk, and about 10 minutes the first time.
 
 ```bash
 git clone https://github.com/ayushvarma7/SentinelDesk.git && cd SentinelDesk
@@ -237,7 +237,7 @@ figure is the more conservative estimate.
   on Hugging Face (CC-BY-NC-4.0), file `aa_dataset-tickets-multi-lang-5-2-50-version.csv`. It has 28,587 tickets:
   57% English, 43% German.
 - **Split:** seed-42, 80/20. The 80% becomes the knowledge base; the 20% is the 5,718-ticket holdout.
-- **Holdout inputs and labels are stored in separate files.** Only `scripts/evaluate.py` reads the labels.
+- **Holdout inputs and labels are stored in separate files.** Only the three evaluation scripts read the labels; training, tuning and the pipeline never do.
 - **Training, retrieval and tuning use the knowledge base only.** Only knowledge-base answers are ever indexed or shown.
 - **The dataset's 20k variant is never mixed in.** It shares 8,399 ticket bodies with the main file.
 

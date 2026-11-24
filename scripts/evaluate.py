@@ -1,4 +1,4 @@
-"""Holdout evaluation. The ONLY legitimate caller of data.load_test_labels().
+"""Holdout evaluation: scores the frozen model on the held-out 20% using data.load_test_labels().
 
     PYTHONPATH=src python scripts/evaluate.py
 
@@ -98,7 +98,7 @@ def pipeline_section(inputs, labels) -> dict:
         "cross_lingual_share_forced": round(float(df["cross_lingual_forced"].mean()), 4),
         "cross_lingual_share_unaided": round(float(df["cross_lingual_unaided"].mean()), 4),
         # Escalated tickets skip the LLM entirely, so an overall p50 flatters the
-        # system. The number that matters for the demo is the drafted one.
+        # system. The number that matters is the drafted one.
         # three-tier outcome (gate.decide) and how often an operator gets a draft to work with
         "status_share": {s: round(float((df["status"] == s).mean()), 4)
                          for s in ("AUTO_DRAFT_READY", "HUMAN_REVIEW", "ESCALATE_ONCALL")},

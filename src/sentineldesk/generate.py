@@ -6,8 +6,8 @@ Three layers, in order of trust:
 2. Code verifies what comes back: every cited ID must have been retrieved, and
    every figure must appear in the evidence. The prompt is not the guarantee.
 3. If there is no API key, or the call fails or rate-limits, the extractive
-   fallback quotes the closest same-language precedent instead. The demo never
-   dies on a network problem.
+   fallback quotes the closest same-language precedent instead, so a network
+   problem never stops the app.
 
 Everything shown to a customer passes through scrub(). 48% of KB answers carry
 dataset anonymisation tokens (<name> 6,105, <tel_num> 10,395, <acc_num> 2,508,

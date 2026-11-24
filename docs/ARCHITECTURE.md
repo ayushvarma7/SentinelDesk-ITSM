@@ -5,7 +5,8 @@ classified, matched against resolved history, and either answered with citations
 at a gate that can explain itself.
 
 **Dataset:** `aa_dataset-tickets-multi-lang-5-2-50-version.csv` — 28,587 tickets, EN/DE,
-official seed-42 80/20 split → 22,863 KB rows (7 answerless rows dropped) / 5,718 holdout.
+official seed-42 80/20 split → 22,869 training rows, of which 22,863 have an answer and form the KB (6 answerless
+rows dropped), and 5,718 holdout tickets.
 
 ---
 
@@ -37,7 +38,10 @@ No model is consulted for the decision itself.
 | `src/sentineldesk/embed.py` | e5 encoder, `query:` / `passage:` prefixes |
 | `src/sentineldesk/classify.py` | Four logistic-regression heads |
 | `src/sentineldesk/retrieve.py` | Index build, search, live-store append |
-| `src/sentineldesk/gate.py` | Escalation rules |
+| `src/sentineldesk/pii.py` | Masks emails, phones, IPs, IBANs, cards and account numbers with the dataset's own tokens |
+| `src/sentineldesk/gate.py` | Escalation rules, risk patterns, the three-tier outcome |
+| `src/sentineldesk/burst.py`, `rootcause.py` | Major-incident detection and root-cause grouping |
+| `src/sentineldesk/store.py` | SQLite problem database and triage log |
 | `src/sentineldesk/generate.py` | Prompt, verification, extractive fallback |
 | `src/sentineldesk/pipeline.py` | `triage()`, `resolve_ticket()` |
 | `api/main.py` | FastAPI backend: runs `triage()`, holds the tickets, serves the admin console and the customer site |
@@ -66,7 +70,8 @@ Technical Support, Product Support and IT Support are not cleanly separable.
 
 **Why priority sits at 0.62.** It is close to unlearnable from this text. High-priority share
 by type is 40.2 / 42.8 / 39.4 / 33.5 percent across Change, Incident, Problem and Request —
-nearly flat. The strongest keyword signal, outage/down, moves it only from 37.6% to 62.9%.
+nearly flat. The strongest keyword signal, "outage" or "down" in the text, lifts it from 38% to 61%, but it
+appears in only 5% of tickets.
 
 **Why priority's ECE is worst.** Deliberate. Anything with `P(high) >= 0.25` is labelled high,
 so those tickets carry confidences between 0.25 and 0.5. The threshold trades ~3 points of
@@ -97,7 +102,7 @@ flowchart LR
 
 **Why two stores rather than one index with a `source` column.** A column would give the same
 reproducibility guarantee. The reason is blast radius: the frozen index costs five minutes of
-GPU time to rebuild and three people's work depends on it, while the live file starts at zero
+GPU time to rebuild and the classifier, the retrieval and every evaluation depend on it, while the live file starts at zero
 bytes and `clear_live()` is two unlinks. A bug in the append path can only damage the
 disposable one.
 
@@ -111,12 +116,12 @@ the console.
 | top-1 same type | 0.888 | vs ~40% base rate |
 | top-1 same queue | 0.736 | vs 0.61 from the classifier |
 | top-1 similarity p50 | 0.9434 | narrow, high band |
-| end-to-end p50 / p95 | 180 / 1177 ms | 200 holdout tickets |
+| end-to-end p50 / p95 | 185 / 1,129 ms | 200 holdout tickets |
 
 ### Cross-lingual retrieval does not happen on its own
 
 An early measurement put it at 16.3% of top-5 hits. That was wrong — it counted the dataset's
-language **label**, and ~15% of labels disagree with the text. Measured against *detected*
+language **label**, and ~12% of labels disagree with the text. Measured against *detected*
 language it is 2.8% for German queries and 3.1% for English. e5 strongly prefers same-language
 neighbours.
 
@@ -136,7 +141,7 @@ Three layers, in increasing order of trust.
 1. **Prompt** — use only the precedents, cite their ids, reply in the detected language.
 2. **Code verification** — the guarantee, because the prompt is only a request.
 3. **Extractive fallback** — no key, a 404, a 429 or a timeout and the system quotes the
-   closest same-language precedent instead. The demo never dies on a network problem.
+   closest same-language precedent instead. A network problem never stops the app.
 
 | Check | What it does |
 |---|---|
@@ -144,8 +149,8 @@ Three layers, in increasing order of trust.
 | Figure guard | Any number with a currency symbol, `%` or a time unit absent from the evidence is flagged. Only 0.3% of KB answers contain such a figure, so this almost never false-positives. |
 | Scrub | Strips anonymisation tokens from anything a customer sees. |
 
-**The scrub subtlety.** 48% of KB answers carry anonymisation tokens, in *two* shapes: 10,956
-answers use `<tel_num>`-style tokens, 2,696 use `[Name]`-style ones. A scrub that
+**The scrub subtlety.** About 58% of KB answers carry anonymisation tokens, in *two* shapes: 10,956
+answers (48%) use `<tel_num>`-style tokens and 2,696 (12%) use `[Name]`-style ones. A scrub that
 handled only the first shape would have left ~12% of answers leaking. 809 answers also store
 newlines as a literal backslash-n.
 
@@ -155,13 +160,16 @@ so an echoed token produced *"we updated the details for  and will call  once ac
 verified."* Masked-PII tokens now become readable phrases in the reply's own language, while
 dataset noise is still removed. Neither layer could see this alone.
 
-| Draft metric | Result | Target |
+| Draft metric (3 drafts) | Result | Target |
 |---|---:|---:|
 | has citation | 1.00 | 1.00 |
 | fabricated citation | 0.00 | 0.00 |
 | invented figures | 0.00 | 0.00 |
 | placeholder leak | 0.00 | 0.00 |
 | reply in ticket's language | 1.00 | 1.00 |
+
+These come from `reports/draft_eval.json`: 10 sampled holdout tickets, of which 3 were drafted (the rest were
+escalated). That is a smoke test, not a benchmark; `SD_DRAFT_N` raises the sample.
 
 Language is scored against the **text**, not the label. Against the label it reads 0.33, and
 every miss is a ticket labelled `de` whose body is written in English — the same 12%
@@ -180,23 +188,23 @@ own numbers, so a badge explains itself:
 | 1 | `priority == high` and `type in (Incident, Problem)` → on-call |
 | 1a | `P(high) x P(Incident or Problem) >= 0.20` → on-call |
 | 1b | 3+ near-identical tickets in 30 min → major incident |
-| 2 | Any head's confidence below its floor → human review |
-| 3 | Top-1 similarity below 0.865, or mean top-3 below 0.845 → no precedent |
-| 4 | Injection, credential request, destructive action, legal threat → blocked |
-| 5 | Draft uncited, miscited, or carrying an unsupported figure → human review |
+| 2 | Queue confidence below 0.50 → human review, draft kept (the type and priority floors are 0) |
+| 3 | Top-1 similarity below 0.865, or mean top-3 below 0.845 → human review, draft kept |
+| 4 | Injection, credential request, destructive action, legal threat → human review, no draft |
+| 5 | Draft with no valid citation, or a fabricated one → human review, draft dropped. An unsupported figure is flagged to the agent. |
 
-**Why rule 1a exists.** Rule 1 needs both labels right and misses ~23% of true high-priority
-Incidents. Recovering that with confidence floors meant escalating ~70% of all traffic and 93%
-of hand-typed benign tickets. Keying on the probability of the dangerous class gets the same
-safety at 42% escalation and 14% benign loss.
+**Why rule 1a exists.** Rule 1 needs both labels right: on the holdout it catches 85.0% of true high-priority
+Incidents. The first fix was higher confidence floors, which reached 97.5% on the validation slice but let only
+23.1% of tickets through to a draft. Rule 1a keys on the probability of the dangerous class instead, and the live
+setting escalates 95.1% of them while auto-drafting 37.5% (`reports/escalation_sweep.json`).
 
 ### Why the similarity floors are hand-calibrated
 
-**Why the dataset's own percentiles are the wrong basis.** Holdout top-1 p10 is 0.9186, but
-all 8 hand-typed tickets measured below it. The dataset is synthetic and its tickets sit
-unusually close to the KB, so a holdout-derived similarity floor escalates ~100% of what a
-person types. Hand-typed bands: in-domain 0.869–0.906, off-domain 0.855–0.864, gibberish 0.833.
-The ~0.005 gap means similarity is **weak evidence** and should not carry much weight.
+**Why the dataset's own percentiles are the wrong basis.** Holdout top-1 similarity has a 10th percentile of
+0.9186, but all 16 routine hand-typed tickets in `scripts/typed_check.py` scored 0.843–0.902. The dataset is synthetic
+and its tickets sit unusually close to the KB, so a floor taken from the dataset's percentiles would hold back every
+ticket a person types. The floors (0.865 and 0.845) are set from hand-typed text instead, and similarity is treated as
+weak evidence next to the classifier's confidence.
 
 ---
 
@@ -205,7 +213,7 @@ The ~0.005 gap means similarity is **weak evidence** and should not carry much w
 Structural, not remembered. `scripts/prepare_data.py` writes the holdout as two files:
 
 - `test_inputs.parquet` — `ticket_id`, `subject`, `body` only
-- `test_labels.parquet` — labels and answers, read by `scripts/evaluate.py` alone
+- `test_labels.parquet` — labels and answers, read only by the evaluation scripts
 
 The inference path cannot read a label because the columns are not in the frame it loads.
 
@@ -230,52 +238,30 @@ self-match contamination even without crossing the split.
 - **Only human resolutions become precedents.** `resolved_by` is required and recorded, and the
   console additionally refuses an unedited AI draft. If a draft could become a precedent, the
   next draft would be grounded in the previous guess.
-- **Thresholds calibrated on hand-typed text**, because the synthetic dataset is not
-  representative of what judges type.
+- **Similarity floors calibrated on hand-typed text**, because the synthetic dataset sits closer to the KB than
+  real tickets do.
 
 ---
 
 ## 8. Known limits
 
-**Hand-typed benign tickets auto-draft at 2 of 14.** The generator is not the problem — it
-scores 1.00 on citations and 0.00 on every failure mode. The gate does not let it run. Cause
-breakdown for the 12 blocked:
+**Hand-typed routine tickets mostly reach a person, by design.** `scripts/typed_check.py` sends 16 routine and 8
+must-escalate tickets, written by hand, through the live gate. Of the 16 routine tickets, 5 auto-draft, 10 go to human
+review with a draft attached and 1 goes to on-call. All 8 must-escalate tickets are stopped without a draft: 7 to
+on-call and 1 (a credential request) to human review. The routine tickets were held back for these reasons (a ticket
+can have several): no sufficiently similar precedent 8, low queue confidence 7, weak top-3 support 4, critical
+incident 1. These are threshold decisions, not generator failures.
 
-| Cause | Count |
-|---|---:|
-| confidence floor (queue 0.50) | 6 |
-| hard rule (high + Incident/Problem) | 3 |
-| similarity floor (0.865) | 3 |
-| model reported not grounded | 0 |
+**`CRITICAL_TYPES` includes `Problem`.** Added because the classifier confuses Incident and Problem, which is
+reasonable on its own, but the hard rule now escalates **34.2% of all holdout tickets** before any other rule fires.
+A duplicate-charge ticket that the model labels a high-priority Problem goes to on-call.
 
-All twelve are threshold decisions. **Earlier versions of this document attributed part of this
-to the KB lacking coverage and the model refusing to ground an answer. That is not what the
-measurement shows.** Three clearly in-domain tickets:
+**German is weaker.** Macro-F1 on the holdout, English vs German: type 0.90 / 0.85, queue 0.69 / 0.49, priority
+0.69 / 0.52.
 
-- *Password reset* — top-1 0.909, relevant precedent, drafts fine
-- *Invoice charged twice* — top-1 0.879, precedent reads "We will investigate the duplicate
-  charge issue and process the necessary refund", yet escalates as
-  `Critical incident (high priority + Problem)`
-- *Adding a new user* — top-1 0.847, relevant precedent, blocked by `queue 0.40 < 0.50`
-
-The precedents are there and they answer the question.
-
-**`CRITICAL_TYPES` includes `Problem`.** Added because the classifier confuses Incident and
-Problem, which is reasonable on its own, but the hard rule now escalates **34.2% of all holdout
-tickets** before any other rule fires. A duplicate invoice charge classified as a high-priority
-Problem goes to on-call.
-
-**Three measured ways back**, all independent:
-
-| Change | Clears | Cost |
-|---|---:|---|
-| `CRITICAL_TYPES` → Incident only | 3 | Removes cover duplicated by rule 1a |
-| queue floor 0.50 → 0.25 | 6 | high-Inc 0.946 → 0.884; queue accuracy 0.749 → 0.623 |
-| similarity floor 0.865 → 0.845 | 3 | A signal that was weak evidence anyway |
-
-**`cross_lingual_share_unaided` of 0.325 still compares labels**, which overstate the true rate
-roughly tenfold. Treat it as an upper bound. The forced slot is verified working in both
-directions on real tickets.
+**`cross_lingual_share_unaided` of 0.32 compares labels**, which overstate the true rate roughly tenfold (2.8–3.1%
+when measured against detected language). Treat it as an upper bound. With the reserved slot, every sampled ticket
+received an other-language precedent (`cross_lingual_share_forced` = 1.0).
 
 ---
 
@@ -305,5 +291,7 @@ scikit-learn versions.
 | `scripts/retrieval_check.py` | `reports/retrieval_check.json` — similarity percentiles |
 | `scripts/draft_eval.py` | `reports/draft_eval.json` — citation and grounding metrics |
 | `scripts/escalation_sweep.py` | `reports/escalation_sweep.json` — the sweep behind the live gate setting |
-| `scripts/attack_table.py` | `reports/attack_table.md` — 26 adversarial cases |
+| `scripts/attack_table.py` | `reports/attack_table.md` — 26 adversarial and look-alike cases plus the burst scenario |
+| `scripts/typed_check.py` | Hand-typed tickets through the live gate, printed (not saved) |
+| `scripts/check_llm.py` | Checks the Gemini key and the configured model name |
 | `scripts/demo_live_kb.py` | Walks the frozen/live learning loop end to end |

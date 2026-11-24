@@ -23,8 +23,8 @@ export function burstGroups(tickets: Ticket[]) {
   }).sort((x, y) => y.at.localeCompare(x.at))
 }
 
-export default function Tickets({ tickets, reload, onUpdate, loading, openId, setOpenId, replay }: {
-  tickets: Ticket[]; reload: () => void; onUpdate: (t: Ticket) => void; loading: boolean
+export default function Tickets({ kb, tickets, reload, onUpdate, loading, openId, setOpenId, replay }: {
+  kb: number | null; tickets: Ticket[]; reload: () => void; onUpdate: (t: Ticket) => void; loading: boolean
   openId: string | null; setOpenId: (id: string | null) => void; replay: number
 }) {
   const t = useT()
@@ -152,7 +152,7 @@ export default function Tickets({ tickets, reload, onUpdate, loading, openId, se
           onClick={() => setStatusF(s => (s.length === 1 && s[0] === 'Escalated' ? [] : ['Escalated']))} hint="Filter to escalated" />
         <MetricCard label={t('p1Open')} value={kpi.p1} active={prioF.length === 1 && prioF[0] === 'high'}
           onClick={() => setPrioF(s => (s.length === 1 && s[0] === 'high' ? [] : ['high']))} hint="Filter to P1" />
-        <MetricCard label={t('kbK')} value="—" hint={t('notExposed')} />
+        <MetricCard label={t('kbK')} value={kb == null ? '—' : kb.toLocaleString()} hint={t('kbHint')} />
       </div>
 
       <div className="grid gap-3 md:grid-cols-[3fr_1fr_1.4fr_2fr]">

@@ -58,7 +58,7 @@ function writeLS(key: string, value: unknown) {
   }
 }
 
-/** Demo-only Northeastern accounts (same as the old Streamlit sign-in). Not real authentication:
+/** Demo-only Northeastern accounts. Not real authentication:
  *  there is no server-side session, the API trusts the email it is given. */
 export const DEMO_ACCOUNTS: Record<string, { password: string; name: string }> = {
   'demo@northeastern.edu': { password: 'demo', name: 'Demo Student' },

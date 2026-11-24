@@ -7,7 +7,7 @@ const DICT = {
     tickets: 'Tickets', organisation: 'Organisation', portal: 'Customer Portal', dashboard: 'Dashboard',
     id: 'ID', summary: 'Summary', priority: 'Priority', type: 'Type', queue: 'Queue', date: 'Date',
     status: 'Status', assigned: 'Assigned To', tags: 'Tags', confidence: 'Confidence',
-    search: 'Search tickets…', allPriorities: 'All priorities', allStatuses: 'All statuses',
+
     high: 'High', medium: 'Medium', low: 'Low', refresh: 'Refresh', results: 'tickets',
     majorIncident: 'Major incident detected', majorIncidentSub: 'similar tickets within 30 minutes — on-call paged',
     back: 'Back to tickets', needsYou: 'High priority — needs you', needsReview: 'Escalated — needs your review',
@@ -15,24 +15,24 @@ const DICT = {
     escalationReasons: 'Why it was escalated', recommended: 'Recommended resolution',
     approve: 'Approve & Send', edit: 'Edit draft', assignMe: 'Assign to me', reject: 'Reject', save: 'Done editing',
     piiMasked: 'PII masked', unverified: 'Unverified claim', handledByAgent: 'Handled by agent',
-    agentTrace: 'Agent trace', finalReply: 'Reply sent to customer', draftReply: 'Drafted reply',
+    finalReply: 'Reply sent to customer', draftReply: 'Drafted reply',
     precedents: 'Precedents', override: 'Override', similarity: 'Similarity', answer: 'Resolution',
     ticketBody: 'Customer message', details: 'Details', incId: 'INC ID', name: 'Name', state: 'State',
     created: 'Created', channel: 'Channel', history: 'Activity', noDraft: 'No suggestion available — write a reply manually.',
-    signIn: 'Sign in', loginTitle: 'Sign in to the support portal', loginHint: 'Email or phone number',
-    loginSub: 'Demo: any email works. Try h.ortiz@stmarys-health.org to see existing tickets.',
-    searchHelp: 'Search your tickets…', raiseIncident: 'Raise Incident', raiseRequest: 'Raise Request',
-    incidentSub: 'Something is broken or not working', requestSub: 'Ask for access, software or information',
-    subject: 'Subject', body: 'Describe the issue', submit: 'Submit', cancel: 'Cancel', myTickets: 'My tickets',
-    noTickets: 'No tickets yet.', signOut: 'Sign out', bot: 'Sentinel Assistant',
-    botHello: 'Hi! Submit a ticket and I will show you the answer as soon as it is ready.',
-    botWorking: 'Analysing your ticket…', botEscalated: 'A specialist is looking at this. Reference',
-    botResolved: 'Here is the answer for', welcome: 'Welcome back',
-    total: 'Total tickets', escRate: 'Escalation rate', avgLatency: 'Avg triage latency',
-    recall: 'High-priority incident recall', byPriority: 'Tickets by priority', byQueue: 'Tickets by queue',
-    outcome: 'Auto-resolved vs escalated', autoResolved: 'Auto-resolved', escalated: 'Escalated',
-    holdout: 'holdout, predicted high + Incident', gateEsc: 'gate escalates', ofHighInc: 'of high Incidents (validation)',
-    mock: 'MOCK', live: 'LIVE', apiDown: 'API not reachable at', loading: 'Loading…', view: 'View',
+
+
+
+
+    subject: 'Subject', body: 'Describe the issue',
+
+
+
+
+    total: 'Total tickets',
+
+    autoResolved: 'Auto-resolved', escalated: 'Escalated',
+    holdout: 'holdout, predicted high + Incident',
+    mock: 'MOCK', live: 'LIVE', apiDown: 'API not reachable at',
     qAll: 'All', qNeedsMe: 'Needs me', qAuto: 'Auto-handled', qMajor: 'Major incident', qSla: 'SLA < 1h',
     replay: 'Replay agent', simulate: 'Simulate outage',
     orgSub: 'Northeastern ITS service desk', openTickets: 'Open tickets', escalatedK: 'Escalated', p1Open: 'P1 open', kbK: 'Knowledge base',
@@ -42,15 +42,15 @@ const DICT = {
     workGoes: 'Where the work goes', volTeam: 'Volume by team and priority', typePrio: 'Type by priority (share of all tickets)',
     typeLang: 'Ticket types by language', topTags: 'Most common issue tags', modelPerf: 'Model performance on the 20% holdout',
     liveOps: 'Live portal tickets', escOnCall: 'Escalated to on-call', medLat: 'Median latency', p95Lat: 'p95 latency',
-    latP95: 'Latency p95', hpRecall: 'High-priority incident recall', share: 'Share', ticketsAxis: 'Tickets', priorityL: 'Priority', typeL: 'Type', languageL: 'Language',
+    latP95: 'Latency p95', hpRecall: 'High-priority incident recall', share: 'Share', ticketsAxis: 'Tickets', priorityL: 'Priority',
     noConfusion: 'No confusion matrix yet. GET /metrics does not expose it; the scores appear here when it does.',
-    notExposed: 'Not exposed by GET /metrics',
+    kbHint: 'Resolved tickets available as precedents',
   },
   de: {
     tickets: 'Tickets', organisation: 'Organisation', portal: 'Kundenportal', dashboard: 'Dashboard',
     id: 'ID', summary: 'Zusammenfassung', priority: 'Priorität', type: 'Typ', queue: 'Warteschlange', date: 'Datum',
     status: 'Status', assigned: 'Zugewiesen an', tags: 'Tags', confidence: 'Konfidenz',
-    search: 'Tickets durchsuchen…', allPriorities: 'Alle Prioritäten', allStatuses: 'Alle Status',
+
     high: 'Hoch', medium: 'Mittel', low: 'Niedrig', refresh: 'Aktualisieren', results: 'Tickets',
     majorIncident: 'Größere Störung erkannt', majorIncidentSub: 'ähnliche Tickets in 30 Minuten — Bereitschaft alarmiert',
     back: 'Zurück zu Tickets', needsYou: 'Hohe Priorität — Sie werden gebraucht', needsReview: 'Eskaliert — bitte prüfen',
@@ -58,24 +58,24 @@ const DICT = {
     escalationReasons: 'Grund der Eskalation', recommended: 'Empfohlene Lösung',
     approve: 'Freigeben & senden', edit: 'Entwurf bearbeiten', assignMe: 'Mir zuweisen', reject: 'Ablehnen', save: 'Fertig',
     piiMasked: 'PII maskiert', unverified: 'Nicht belegte Aussage', handledByAgent: 'Vom Agenten bearbeitet',
-    agentTrace: 'Agenten-Ablauf', finalReply: 'An Kunden gesendete Antwort', draftReply: 'Antwortentwurf',
+    finalReply: 'An Kunden gesendete Antwort', draftReply: 'Antwortentwurf',
     precedents: 'Präzedenzfälle', override: 'Übersteuern', similarity: 'Ähnlichkeit', answer: 'Lösung',
     ticketBody: 'Kundennachricht', details: 'Details', incId: 'INC-ID', name: 'Name', state: 'Status',
     created: 'Erstellt', channel: 'Kanal', history: 'Aktivität', noDraft: 'Kein Vorschlag — bitte manuell antworten.',
-    signIn: 'Anmelden', loginTitle: 'Im Supportportal anmelden', loginHint: 'E-Mail oder Telefonnummer',
-    loginSub: 'Demo: jede E-Mail funktioniert. h.ortiz@stmarys-health.org zeigt vorhandene Tickets.',
-    searchHelp: 'Ihre Tickets durchsuchen…', raiseIncident: 'Störung melden', raiseRequest: 'Anfrage stellen',
-    incidentSub: 'Etwas ist defekt oder funktioniert nicht', requestSub: 'Zugriff, Software oder Informationen anfragen',
-    subject: 'Betreff', body: 'Beschreiben Sie das Problem', submit: 'Absenden', cancel: 'Abbrechen', myTickets: 'Meine Tickets',
-    noTickets: 'Noch keine Tickets.', signOut: 'Abmelden', bot: 'Sentinel-Assistent',
-    botHello: 'Hallo! Reichen Sie ein Ticket ein, ich zeige Ihnen die Antwort, sobald sie bereit ist.',
-    botWorking: 'Ihr Ticket wird analysiert…', botEscalated: 'Ein Spezialist kümmert sich darum. Referenz',
-    botResolved: 'Hier ist die Antwort zu', welcome: 'Willkommen zurück',
-    total: 'Tickets gesamt', escRate: 'Eskalationsquote', avgLatency: 'Ø Triage-Latenz',
-    recall: 'Recall kritischer Störungen', byPriority: 'Tickets nach Priorität', byQueue: 'Tickets nach Warteschlange',
-    outcome: 'Automatisch gelöst vs. eskaliert', autoResolved: 'Automatisch gelöst', escalated: 'Eskaliert',
-    holdout: 'Holdout, hoch + Incident vorhergesagt', gateEsc: 'Gate eskaliert', ofHighInc: 'der kritischen Störungen (Validierung)',
-    mock: 'MOCK', live: 'LIVE', apiDown: 'API nicht erreichbar unter', loading: 'Lädt…', view: 'Ansehen',
+
+
+
+
+    subject: 'Betreff', body: 'Beschreiben Sie das Problem',
+
+
+
+
+    total: 'Tickets gesamt',
+
+    autoResolved: 'Automatisch gelöst', escalated: 'Eskaliert',
+    holdout: 'Holdout, hoch + Incident vorhergesagt',
+    mock: 'MOCK', live: 'LIVE', apiDown: 'API nicht erreichbar unter',
     qAll: 'Alle', qNeedsMe: 'Braucht mich', qAuto: 'Automatisch', qMajor: 'Größere Störung', qSla: 'SLA < 1 Std.',
     replay: 'Agent abspielen', simulate: 'Ausfall simulieren',
     orgSub: 'Northeastern ITS Service Desk', openTickets: 'Offene Tickets', escalatedK: 'Eskaliert', p1Open: 'P1 offen', kbK: 'Wissensbasis',
@@ -85,9 +85,9 @@ const DICT = {
     workGoes: 'Wohin die Arbeit geht', volTeam: 'Volumen nach Team und Priorität', typePrio: 'Typ nach Priorität (Anteil aller Tickets)',
     typeLang: 'Tickettypen nach Sprache', topTags: 'Häufigste Themen-Tags', modelPerf: 'Modellqualität auf dem 20%-Holdout',
     liveOps: 'Live-Portaltickets', escOnCall: 'An Bereitschaft eskaliert', medLat: 'Median-Latenz', p95Lat: 'p95-Latenz',
-    latP95: 'Latenz p95', hpRecall: 'Recall kritischer Störungen', share: 'Anteil', ticketsAxis: 'Tickets', priorityL: 'Priorität', typeL: 'Typ', languageL: 'Sprache',
+    latP95: 'Latenz p95', hpRecall: 'Recall kritischer Störungen', share: 'Anteil', ticketsAxis: 'Tickets', priorityL: 'Priorität',
     noConfusion: 'Noch keine Konfusionsmatrix. GET /metrics liefert sie nicht; die Werte erscheinen hier, sobald verfügbar.',
-    notExposed: 'Nicht in GET /metrics enthalten',
+    kbHint: 'Gelöste Tickets, die als Präzedenzfälle dienen',
   },
 } as const
 

@@ -28,7 +28,7 @@ class BurstDetector:
         self.window_s = config.BURST_WINDOW_S if window_s is None else window_s
         self._recent: deque[tuple[str, float, np.ndarray]] = deque(maxlen=maxlen)
         self._n = 0
-        self._lock = threading.Lock()     # Streamlit and draft_eval call triage() from threads
+        self._lock = threading.Lock()     # the API and draft_eval call triage() from threads
 
     def clear(self) -> None:
         """Forget every recent ticket (evaluation scripts call this between tickets)."""

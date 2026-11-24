@@ -1,7 +1,8 @@
 """SentinelDesk API: FastAPI wrapper around sentineldesk.pipeline.triage.
 
-Run from the repo root:
-    SD_MOCK=1 .venv/bin/uvicorn api.main:app --reload --port 8000
+Run it with the rest of the app:  ./run.sh app
+Or alone, from the repo root (SD_MOCK=1 skips the models):
+    SD_MOCK=1 .venv/bin/python -m uvicorn api.main:app --reload --port 8000
 
 Mode:
   real  - sentineldesk.pipeline imports AND artifacts/heads.joblib + kb_embeddings.npy exist AND SD_MOCK != 1
@@ -624,6 +625,7 @@ def metrics() -> dict:
                 tm.get("high_priority_incident", {}).get("recall_predicted_high_and_incident"),
         },
         "major_incident": {"active": bool(burst_ids), "ticket_ids": burst_ids},
+        "kb_tickets": overview()["kb_tickets"],     # resolved tickets available as precedents
         # holdout model numbers (scripts/evaluate.py) and the problem database
         "model": {
             "n_holdout": tm.get("n_holdout"),

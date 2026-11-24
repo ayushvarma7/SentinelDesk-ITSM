@@ -1,6 +1,6 @@
 """Single source of truth for paths, model names and thresholds.
 
-Announce changes to the team — every track imports this.
+Every module imports this.
 """
 from __future__ import annotations
 
@@ -19,7 +19,7 @@ EMBED_DIM = 384
 QUERY_PREFIX = "query: "
 PASSAGE_PREFIX = "passage: "
 
-LLM_MODEL = "gemini-3.5-flash-lite"   # 2.5-* are retired (404); 3.5-flash 504s on capacity
+LLM_MODEL = os.getenv("SD_LLM_MODEL", "gemini-3.5-flash-lite")   # 2.5-* are retired (404); 3.5-flash 504s on capacity
 LLM_MAX_TOKENS = 1024
 LLM_TIMEOUT_MS = 20000   # past this, fall back to extractive rather than stall the UI
 
@@ -101,14 +101,13 @@ HYBRID_LEXICAL_WEIGHT = 0.0
 KB_LEX_PATH = ARTIFACTS / "kb_tfidf.npz"            # keyword index, row-aligned with KB_META_PATH
 
 # --- escalation gate --------------------------------------------------------
-# EDA: the hard rule (high + Incident) alone fires on 17.2% of KB tickets, which is
-# already the top of the 15-25% target band. Keep the soft thresholds tight or the
-# overall escalation rate balloons past 40% and the copilot looks useless.
+# The hard rule (high priority + Incident or Problem) alone escalates 34.2% of holdout
+# tickets (17.2% of KB tickets for Incident alone). Keep the soft thresholds tight or the
+# overall escalation rate balloons and the copilot stops being useful.
 # Similarity floors: calibrated on HAND-TYPED tickets, not KB percentiles. The dataset is
-# synthetic and its own tickets sit unusually close to the KB (validation top-1 p25 0.918), while
-# hand-typed text scores: in-domain 0.845-0.906 | off-domain 0.855-0.864 | gibberish 0.833-0.851 |
-# off-topic (a recipe) 0.823. A KB-derived floor escalates 100% of judge input, so these are only
-# a weak off-topic filter (they fire on 0.1% of validation tickets).
+# synthetic and its own tickets sit unusually close to the KB (holdout top-1 p10 is 0.919), while
+# 16 routine hand-typed tickets (scripts/typed_check.py) score 0.843-0.902. A KB-derived floor would
+# hold back every ticket a person types, so these floors are only a weak off-topic filter.
 MIN_TOP1_SIMILARITY = 0.8650
 MIN_MEAN_TOP3_SIMILARITY = 0.8450
 #

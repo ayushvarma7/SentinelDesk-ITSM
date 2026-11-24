@@ -88,7 +88,7 @@ def main() -> None:
     print(f"[clf] P(high) threshold={thr:.2f} {tuned_stats}  (trained in {time.time() - t0:.0f}s)")
     if abs(thr - config.HIGH_PRIORITY_THRESHOLD) > 1e-9:
         print(f"[clf] NOTE: tuned threshold {thr} differs from config.HIGH_PRIORITY_THRESHOLD; "
-              "heads.joblib uses the tuned value; update config and tell the team")
+              "heads.joblib uses the tuned value; update config")
 
     bundle["high_threshold"] = thr
     classify.save(bundle)

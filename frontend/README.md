@@ -41,6 +41,8 @@ and 25 per citation that was not retrieved.
 
 ## API endpoints
 
-`GET /health`, `POST /triage`, `GET /tickets[?requester=email]`, `GET /tickets/{id}`, `POST /tickets`,
-`POST /tickets/{id}/approve|reject|assign`, `GET /metrics`, `GET /problems`, `GET|PUT /rules`, `POST /rules/test`,
-`GET /gate/policy`. Interactive docs: http://localhost:8000/docs.
+Tickets: `GET /tickets[?email=]`, `GET /tickets/{id}`, `POST /tickets`, `POST /tickets/{id}/approve|reject|assign`.
+Triage and metrics: `POST /triage`, `GET /metrics`, `GET /health`, `GET /logs`, `GET /overview`.
+Problems: `GET /problems`, `GET /problems/search`, `GET /problems/{id}`, `POST /problems/{id}/resolve|reopen`.
+Rules: `GET|PUT /rules`, `POST /rules/reset`, `POST /rules/test`, `GET /gate/policy`.
+Interactive docs: http://localhost:8000/docs.

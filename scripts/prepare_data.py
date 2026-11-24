@@ -8,7 +8,7 @@ somebody has to remember:
 
   kb_train.parquet    80%, all columns incl. answer  -> training + RAG indexing
   test_inputs.parquet 20%, ticket_id/subject/body    -> what inference may see
-  test_labels.parquet 20%, ticket_id + labels/answer -> scripts/evaluate.py only
+  test_labels.parquet 20%, ticket_id + labels/answer -> evaluation scripts only
 """
 import sys
 from pathlib import Path
