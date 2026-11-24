@@ -1,0 +1,291 @@
+<title>SentinelDesk Architecture</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: single measure column, full-bleed figures, data in mono */
+:root{
+  --bg:#f6f7f9; --surface:#fff; --sunk:#eef0f4;
+  --fg:#15181e; --muted:#5b6473; --line:#dde1e8;
+  --accent:#2b5f8f; --stop:#9e5410; --go:#12685a;
+  --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111318; --surface:#191c22; --sunk:#14171c;
+  --fg:#e5e8ee; --muted:#98a1b0; --line:#282d37;
+  --accent:#84b4e2; --stop:#d79a53; --go:#4cbda4; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#111318; --surface:#191c22; --sunk:#14171c;
+  --fg:#e5e8ee; --muted:#98a1b0; --line:#282d37;
+  --accent:#84b4e2; --stop:#d79a53; --go:#4cbda4; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);line-height:1.65;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding-block:56px 80px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:2.1rem;font-weight:600;letter-spacing:-.02em;margin:0 0 .3em;text-wrap:balance}
+h2{font-size:1.35rem;font-weight:600;letter-spacing:-.01em;margin:3em 0 .6em;text-wrap:balance;
+  padding-top:.8em;border-top:1px solid var(--line)}
+h3{font-size:1.02rem;font-weight:600;margin:2em 0 .4em}
+p{margin:0 0 1em;max-width:68ch}
+.lede{font-size:1.1rem;color:var(--muted);max-width:62ch;margin-bottom:2em}
+code,.m{font-family:var(--mono);font-size:.88em}
+code{background:var(--sunk);padding:.1em .35em;border-radius:3px}
+figure{margin:2em 0;padding:0}
+figcaption{font-size:.85rem;color:var(--muted);margin-top:.7em;max-width:66ch}
+svg{max-width:100%;height:auto;display:block}
+.tbl{overflow-x:auto;margin:1.2em 0}
+table{border-collapse:collapse;width:100%;font-size:.9rem;min-width:420px}
+th,td{text-align:left;padding:.5em .8em;border-bottom:1px solid var(--line)}
+th{font-weight:500;color:var(--muted);font-size:.8rem;letter-spacing:.03em;text-transform:uppercase}
+td.n{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.note{border-left:3px solid var(--accent);background:var(--surface);padding:.9em 1.1em;margin:1.4em 0;border-radius:0}
+.note p:last-child{margin-bottom:0}
+.note b{font-weight:600}
+.stop{border-left-color:var(--stop)}
+ul{max-width:66ch;padding-left:1.2em}li{margin-bottom:.4em}
+.k{font-family:var(--mono);font-size:.82rem;color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:.75rem;padding:.12em .5em;border-radius:3px;
+  border:1px solid var(--line);color:var(--muted);white-space:nowrap}
+.pill.go{color:var(--go);border-color:var(--go)}
+.pill.stop{color:var(--stop);border-color:var(--stop)}
+.meta{font-size:.85rem;color:var(--muted);font-family:var(--mono);margin-bottom:2.5em}
+</style>
+
+<div class="wrap">
+
+<h1>SentinelDesk</h1>
+<p class="lede">Multilingual incident triage with precedent-grounded drafting. A ticket arrives, gets classified, matched against resolved history, and either answered with citations or stopped at a gate that can explain itself.</p>
+<p class="meta">28,587 tickets · EN/DE · 22,863 KB rows · 5,718 holdout · seed 42</p>
+
+<h2>Architecture</h2>
+
+<p>One encoder pass does three jobs. The 384-dimension vector it produces is the classifier's feature, the retrieval query, and — when the KB was built — the index itself. There is no second model to load and no duplicated compute.</p>
+
+<figure>
+<svg viewBox="0 0 860 300" role="img" aria-label="Pipeline: ticket text is cleaned and PII-masked, encoded once, then that vector feeds both the classifier heads and retrieval; the gate combines both before drafting.">
+<defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.6" stroke-linecap="round"/></marker></defs>
+<g font-family="IBM Plex Sans, sans-serif">
+<rect x="8" y="118" width="120" height="56" rx="5" fill="var(--surface)" stroke="var(--line)"/>
+<text x="68" y="142" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">Ticket text</text>
+<text x="68" y="159" text-anchor="middle" font-size="11" fill="var(--muted)">subject + body</text>
+<line x1="132" y1="146" x2="166" y2="146" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#a)"/>
+<rect x="170" y="118" width="124" height="56" rx="5" fill="var(--surface)" stroke="var(--line)"/>
+<text x="232" y="142" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">Clean + mask</text>
+<text x="232" y="159" text-anchor="middle" font-size="11" fill="var(--muted)">PII → tokens</text>
+<line x1="298" y1="146" x2="332" y2="146" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#a)"/>
+<rect x="336" y="118" width="124" height="56" rx="5" fill="var(--surface)" stroke="var(--accent)" stroke-width="1.4"/>
+<text x="398" y="142" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">e5-small</text>
+<text x="398" y="159" text-anchor="middle" font-size="11" fill="var(--muted)">one 384-d vector</text>
+<path d="M464 136 L500 136 L500 60 L536 60" fill="none" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#a)"/>
+<path d="M464 156 L500 156 L500 232 L536 232" fill="none" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#a)"/>
+<rect x="540" y="32" width="150" height="56" rx="5" fill="var(--surface)" stroke="var(--line)"/>
+<text x="615" y="56" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">Four heads</text>
+<text x="615" y="73" text-anchor="middle" font-size="11" fill="var(--muted)">TF-IDF ‖ vector</text>
+<rect x="540" y="204" width="150" height="56" rx="5" fill="var(--surface)" stroke="var(--line)"/>
+<text x="615" y="228" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">Retrieval</text>
+<text x="615" y="245" text-anchor="middle" font-size="11" fill="var(--muted)">top 5 precedents</text>
+<path d="M694 60 L730 60 L730 130 L758 130" fill="none" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#a)"/>
+<path d="M694 232 L730 232 L730 162 L758 162" fill="none" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#a)"/>
+<rect x="762" y="118" width="90" height="56" rx="5" fill="var(--surface)" stroke="var(--stop)" stroke-width="1.4"/>
+<text x="807" y="142" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">Gate</text>
+<text x="807" y="159" text-anchor="middle" font-size="11" fill="var(--muted)">rules only</text>
+</g></svg>
+<figcaption>The gate sees both the classifier's confidences and the retrieval scores before it decides. No model is consulted for the decision itself.</figcaption>
+</figure>
+
+<h2>The ML side</h2>
+
+<p>Four logistic-regression heads over <code>[word TF-IDF ‖ e5 embedding]</code>, <code>C=32</code>, <code>class_weight="balanced"</code>. Every setting was chosen on a 10% KB validation slice; the holdout was evaluated once, on the frozen model.</p>
+
+<div class="tbl"><table>
+<thead><tr><th>Head</th><th>Macro-F1</th><th>Accuracy</th><th>ECE</th></tr></thead>
+<tbody>
+<tr><td>type</td><td class="n">0.8777</td><td class="n">0.8692</td><td class="n">0.028</td></tr>
+<tr><td>queue</td><td class="n">0.6109</td><td class="n">0.6142</td><td class="n">0.012</td></tr>
+<tr><td>priority</td><td class="n">0.6195</td><td class="n">0.6366</td><td class="n">0.082</td></tr>
+<tr><td>language</td><td class="n">0.9666</td><td class="n">0.9675</td><td class="n">0.003</td></tr>
+</tbody></table></div>
+
+<p>Queue sits at 0.61 because it has ten classes at 21× imbalance and the labels genuinely overlap — Technical Support, Product Support and IT Support are not cleanly separable. Priority sits at 0.62 for a different reason: it is close to unlearnable from this text. High-priority share by type is 40.2 / 42.8 / 39.4 / 33.5 percent across Change, Incident, Problem and Request. Nearly flat. The strongest keyword signal, outage/down, moves it only from 37.6% to 62.9%.</p>
+
+<p>Priority's ECE is the worst of the four, and that is deliberate. Anything with <span class="m">P(high) ≥ 0.25</span> is labelled high, so those tickets carry confidences between 0.25 and 0.5. The threshold trades about three points of macro-F1 for about thirteen points of high-priority recall. A missed outage costs more than a false alarm.</p>
+
+<div class="note"><p><b>Why not a fine-tuned transformer.</b> About 20 ms per ticket on CPU, calibrated probabilities the gate can threshold, and minutes to train. The label noise caps any model on queue and priority, so the ceiling a transformer would reach for is not there to reach.</p></div>
+
+<h2>Retrieval and the two stores</h2>
+
+<p>Exact cosine search in numpy over L2-normalised vectors — not faiss. On macOS, faiss and torch each bundle libomp, and importing faiss before torch aborts the process with <span class="m">OMP: Error #15</span>. The pipeline imports torch. At 22,863 × 384 an exact matmul is about 0.9 ms, so there was nothing to gain.</p>
+
+<p>That constraint turned out to be a gift. A plain matrix grows by <code>np.vstack</code>; a built faiss index would need rebuilding. Appending a precedent costs one encode, about 11 ms.</p>
+
+<figure>
+<svg viewBox="0 0 860 250" role="img" aria-label="Two stores: a frozen read-only knowledge base of 22,863 rows and a live precedent store that only human resolutions enter. Search reads both; only resolution writes.">
+<g font-family="IBM Plex Sans, sans-serif">
+<rect x="8" y="24" width="250" height="68" rx="5" fill="var(--surface)" stroke="var(--line)"/>
+<text x="133" y="50" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">Frozen KB index</text>
+<text x="133" y="68" text-anchor="middle" font-size="11" fill="var(--muted)">22,863 × 384 · read-only</text>
+<text x="133" y="83" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="IBM Plex Mono, monospace">TKT-xxxxx</text>
+<rect x="8" y="140" width="250" height="68" rx="5" fill="var(--surface)" stroke="var(--go)" stroke-width="1.4"/>
+<text x="133" y="166" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">Live precedent store</text>
+<text x="133" y="184" text-anchor="middle" font-size="11" fill="var(--muted)">grows on resolution only</text>
+<text x="133" y="199" text-anchor="middle" font-size="10.5" fill="var(--muted)" font-family="IBM Plex Mono, monospace">LIVE-xxxxx</text>
+<path d="M262 58 L330 58 L330 108 L388 108" fill="none" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#a)"/>
+<path d="M262 174 L330 174 L330 124 L388 124" fill="none" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#a)"/>
+<rect x="392" y="88" width="150" height="56" rx="5" fill="var(--surface)" stroke="var(--line)"/>
+<text x="467" y="112" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">search()</text>
+<text x="467" y="129" text-anchor="middle" font-size="11" fill="var(--muted)">merge, dedup, top 5</text>
+<line x1="546" y1="116" x2="582" y2="116" stroke="var(--muted)" stroke-width="1.3" marker-end="url(#a)"/>
+<rect x="586" y="88" width="150" height="56" rx="5" fill="var(--surface)" stroke="var(--line)"/>
+<text x="661" y="112" text-anchor="middle" font-size="13" font-weight="500" fill="var(--fg)">Draft or stop</text>
+<text x="661" y="129" text-anchor="middle" font-size="11" fill="var(--muted)">cites the ids it used</text>
+<path d="M661 148 L661 224 L180 224 L180 212" fill="none" stroke="var(--go)" stroke-width="1.3" stroke-dasharray="4 4" marker-end="url(#a)"/>
+<text x="420" y="240" text-anchor="middle" font-size="11" fill="var(--go)">only after a named person writes the resolution</text>
+</g></svg>
+<figcaption>The frozen index is never written at runtime. Evaluation passes <code>include_live=False</code>, so no published metric can move because somebody used the console.</figcaption>
+</figure>
+
+<p>Keeping them apart is about blast radius more than correctness. A <span class="m">source</span> column on one index would give the same reproducibility guarantee. But the frozen index costs five minutes of GPU time to rebuild and three people's work depends on it, while the live file starts at zero bytes and <code>clear_live()</code> is two unlinks. A bug in the append path can only damage the disposable one.</p>
+
+<h3>Measured retrieval quality</h3>
+
+<div class="tbl"><table>
+<thead><tr><th>Metric</th><th>Value</th><th>Note</th></tr></thead>
+<tbody>
+<tr><td>top-1 same type</td><td class="n">0.888</td><td>vs ~40% base rate</td></tr>
+<tr><td>top-1 same queue</td><td class="n">0.736</td><td>vs 0.61 classifier</td></tr>
+<tr><td>top-1 similarity p50</td><td class="n">0.9434</td><td>narrow, high band</td></tr>
+<tr><td>end-to-end p50 / p95</td><td class="n">180 / 1177 ms</td><td>200 holdout tickets</td></tr>
+</tbody></table></div>
+
+<div class="note stop"><p><b>Cross-lingual retrieval does not happen on its own.</b> An early measurement put it at 16.3% of top-5 hits, which was wrong — it counted the dataset's language <i>label</i>, and about 15% of labels disagree with the text. Measured against detected language it is 2.8% for German queries and 3.1% for English. e5 strongly prefers same-language neighbours.</p>
+<p>It surfaced because a task failed: hunting for a German demo ticket whose top-5 contained an English precedent found nothing, because there was nothing to find. The fix reserves one slot in the top-5 and runs a second search restricted to the other language — a reserved slot alone was not enough, since the unrestricted top-30 for a German query is thirty German tickets.</p></div>
+
+<h2>Grounded drafting</h2>
+
+<p>Three layers, in increasing order of trust. The prompt asks for grounded JSON. Code then verifies what comes back. If there is no key or the call fails, an extractive fallback quotes the closest same-language precedent.</p>
+
+<ul>
+<li><b>Citation check</b> — every cited id must be in the retrieved set. An id in the prose but missing from the model's own list still counts; an id in neither is a fabrication.</li>
+<li><b>Figure guard</b> — any number carrying a currency symbol, a percent sign or a time unit that appears in no precedent is flagged. Only 0.3% of KB answers contain such a figure, so this almost never false-positives.</li>
+<li><b>Scrub</b> — 48% of KB answers carry anonymisation tokens. They come in two shapes: 10,956 answers use <span class="m">&lt;tel_num&gt;</span>-style tokens and 2,696 use <span class="m">[Name]</span>-style ones. The execution plan specified only the first, so roughly 12% of answers would still have leaked.</li>
+</ul>
+
+<div class="note"><p><b>The scrub/PII collision.</b> PII masking rewrites real data <i>into</i> <span class="m">&lt;email&gt;</span> and <span class="m">&lt;tel_num&gt;</span> before the ticket reaches the model. Scrub was deleting exactly those shapes from the reply, so an echoed token produced <i>"we updated the details for and will call once account is verified."</i> Masked-PII tokens now become readable phrases in the reply's own language; dataset noise is still removed. Neither layer could see this alone.</p></div>
+
+<div class="tbl"><table>
+<thead><tr><th>Draft metric</th><th>Result</th><th>Target</th></tr></thead>
+<tbody>
+<tr><td>has citation</td><td class="n">1.00</td><td class="n">1.00</td></tr>
+<tr><td>fabricated citation</td><td class="n">0.00</td><td class="n">0.00</td></tr>
+<tr><td>invented figures</td><td class="n">0.00</td><td class="n">0.00</td></tr>
+<tr><td>placeholder leak</td><td class="n">0.00</td><td class="n">0.00</td></tr>
+<tr><td>reply in ticket's language</td><td class="n">1.00</td><td class="n">1.00</td></tr>
+</tbody></table></div>
+
+<p>Language is scored against the text, not the label. Against the label it reads 0.33, and every miss is a ticket labelled <span class="m">de</span> whose body is written in English. The detector is right and the dataset is wrong — the same 12% disagreement the EDA found.</p>
+
+<h2>The escalation gate</h2>
+
+<p>Deterministic rules, no model in the decision path. Each rule returns a sentence with its own numbers in it, so a badge explains itself without anyone opening the source: <span class="m">"No sufficiently similar precedent (best match 0.8586 &lt; 0.8650)"</span>.</p>
+
+<p>The rule that carries safety is not a confidence floor. It is <span class="m">P(high) × P(Incident or Problem) ≥ 0.20</span> — the probability of the dangerous class, which fires even when the argmax labels are wrong. Incident and Problem both mean "service is broken" and the classifier confuses them, so both count.</p>
+
+<div class="note stop"><p><b>Why confidence floors could not do this job.</b> The hard rule needs both labels right and misses about 23% of true high-priority Incidents. Recovering that with confidence floors meant escalating ~70% of all traffic and 93% of hand-typed benign tickets. Keying on the dangerous class gets the same safety at 42% escalation and 14% benign loss.</p></div>
+
+<h3>The calibration frontier</h3>
+
+<p>A sweep of 100 threshold settings against two distributions at once — the 2,286-ticket validation slice where labels exist, and 22 hand-written tickets where they do not. All 100 settings stopped all 8 critical and adversarial tickets, so the hard rules carry that regardless. One knob moves everything:</p>
+
+<figure>
+<svg viewBox="0 0 860 300" role="img" aria-label="As the queue confidence floor rises from 0.00 to 0.50, high-priority Incident escalation rises from 0.884 to 0.946 while hand-typed auto-drafting falls from 0.678 to 0.357.">
+<g font-family="IBM Plex Sans, sans-serif">
+<line x1="70" y1="40" x2="70" y2="230" stroke="var(--line)"/>
+<line x1="70" y1="230" x2="760" y2="230" stroke="var(--line)"/>
+<text x="70" y="256" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">0.00</text>
+<text x="242" y="256" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">0.15</text>
+<text x="415" y="256" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">0.25</text>
+<text x="587" y="256" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">0.35</text>
+<text x="760" y="256" text-anchor="middle" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">0.50</text>
+<text x="415" y="280" text-anchor="middle" font-size="12" fill="var(--muted)">queue confidence floor</text>
+<text x="56" y="44" text-anchor="end" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">1.0</text>
+<text x="56" y="234" text-anchor="end" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">0.0</text>
+<polyline points="70,62 242,62 415,62 587,56 760,45" fill="none" stroke="var(--stop)" stroke-width="2"/>
+<circle cx="70" cy="62" r="3.5" fill="var(--stop)"/><circle cx="242" cy="62" r="3.5" fill="var(--stop)"/><circle cx="415" cy="62" r="3.5" fill="var(--stop)"/><circle cx="587" cy="56" r="3.5" fill="var(--stop)"/><circle cx="760" cy="45" r="3.5" fill="var(--stop)"/>
+<text x="775" y="42" font-size="11.5" fill="var(--stop)">high-Inc escalated</text>
+<text x="775" y="56" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">0.884 → 0.946</text>
+<polyline points="70,101 242,101 415,121 587,128 760,162" fill="none" stroke="var(--go)" stroke-width="2"/>
+<circle cx="70" cy="101" r="3.5" fill="var(--go)"/><circle cx="242" cy="101" r="3.5" fill="var(--go)"/><circle cx="415" cy="121" r="3.5" fill="var(--go)"/><circle cx="587" cy="128" r="3.5" fill="var(--go)"/><circle cx="760" cy="162" r="3.5" fill="var(--go)"/>
+<text x="775" y="166" font-size="11.5" fill="var(--go)">hand-typed drafted</text>
+<text x="775" y="180" font-size="11" fill="var(--muted)" font-family="IBM Plex Mono, monospace">0.678 → 0.357</text>
+<line x1="760" y1="40" x2="760" y2="230" stroke="var(--line)" stroke-dasharray="3 3"/>
+<text x="752" y="212" text-anchor="end" font-size="11" fill="var(--muted)">current setting</text>
+</g></svg>
+<figcaption>Safety and usability move in opposite directions along one axis. <code>critical_score_min</code> is inert across its whole range at the current queue floor — 0.05 through 0.30 give identical results.</figcaption>
+</figure>
+
+<p>No setting reached the 0.95 safety clause; the ceiling is 0.946. The team currently sits at the safe end, which costs hand-typed drafting.</p>
+
+<h2>Leakage discipline</h2>
+
+<p>Structural rather than remembered. <code>prepare_data.py</code> writes the holdout as two files: <span class="m">test_inputs.parquet</span> with only ticket_id, subject and body, and <span class="m">test_labels.parquet</span> with everything else. The inference path cannot read a label because the columns are not in the frame it loads.</p>
+
+<p>Test tickets <i>are</i> embedded on every evaluation — encoded, searched with, discarded. Embedding is a read; indexing is the write that never happens. The index holds exactly the 22,863 KB rows, with zero holdout ids inside it.</p>
+
+<h2>Decisions worth defending</h2>
+
+<ul>
+<li><b>One encoder, three jobs.</b> Classifier features, retrieval queries and the index all come from the same pass. Cross-lingual capability comes free with a multilingual encoder; so does a language head trained on the data already present.</li>
+<li><b>numpy over faiss.</b> Forced by a macOS libomp conflict, vindicated by making the live store cheap to append.</li>
+<li><b>Verification in code, not in the prompt.</b> The prompt is a request; the citation and figure checks are guarantees. A model that ignores an instruction still cannot smuggle a fabricated id past a set membership test.</li>
+<li><b>No draft at all when escalating.</b> Showing a suggested reply beside "escalate to on-call" invites someone to send it.</li>
+<li><b>Only human resolutions become precedents.</b> <code>resolved_by</code> is required and recorded. If an AI draft could become a precedent, the next draft would be grounded in the previous guess.</li>
+<li><b>Thresholds calibrated on hand-typed text.</b> Holdout percentiles would have escalated 100% of what a person types, because the dataset is synthetic and its tickets sit unusually close to the KB.</li>
+</ul>
+
+<h2>Known limits</h2>
+
+<p><b>Hand-typed benign tickets auto-draft at 2 of 14.</b> The generator is not the problem — it scores 1.00 on citations and 0.00 on every failure mode. The gate does not let it run. Cause breakdown for the twelve blocked:</p>
+
+<div class="tbl"><table>
+<thead><tr><th>Cause</th><th>Count</th></tr></thead>
+<tbody>
+<tr><td>confidence floor (queue 0.50)</td><td class="n">6</td></tr>
+<tr><td>hard rule (high + Incident/Problem)</td><td class="n">3</td></tr>
+<tr><td>similarity floor (0.865)</td><td class="n">3</td></tr>
+<tr><td>model reported not grounded</td><td class="n">0</td></tr>
+</tbody></table></div>
+
+<div class="note stop"><p><b>A correction to an earlier version of this page.</b> It attributed part of this to the KB lacking coverage and the model refusing to ground an answer. The measurement does not show that — zero of the twelve are grounding refusals. All are threshold decisions.</p>
+<p>Three clearly in-domain tickets: <i>password reset</i> (top-1 0.909, drafts fine); <i>invoice charged twice</i> (top-1 0.879, precedent reads "we will investigate the duplicate charge issue and process the necessary refund", yet escalates as a high-priority Problem); <i>adding a new user</i> (top-1 0.847, blocked by <span class="m">queue 0.40 &lt; 0.50</span>). The precedents are there and they answer the question.</p></div>
+
+<p><span class="m">CRITICAL_TYPES</span> includes <span class="m">Problem</span>, added because the classifier confuses it with Incident. Reasonable alone, but the hard rule now escalates <b>34.2% of all holdout tickets</b> before any other rule fires.</p>
+
+<div class="tbl"><table>
+<thead><tr><th>Change</th><th>Clears</th><th>Cost</th></tr></thead>
+<tbody>
+<tr><td>CRITICAL_TYPES → Incident only</td><td class="n">3</td><td>Removes cover duplicated by rule 1a</td></tr>
+<tr><td>queue floor 0.50 → 0.25</td><td class="n">6</td><td>high-Inc 0.946 → 0.884</td></tr>
+<tr><td>similarity floor 0.865 → 0.845</td><td class="n">3</td><td>A weak signal anyway</td></tr>
+</tbody></table></div>
+
+<ul>
+<li>The similarity signal separates in-domain from off-domain by about 0.005 — in-domain 0.869–0.906, off-domain 0.855–0.864, gibberish 0.833. Weak evidence.</li>
+<li><span class="m">cross_lingual_share_unaided</span> of 0.325 still compares labels, which overstate the true rate roughly tenfold. An upper bound; the forced slot is verified working in both directions.</li>
+</ul>
+
+<h2>Running it</h2>
+
+<p>Python 3.12 — torch publishes no 3.14 wheels, and the first version of this repo was built on 3.14.</p>
+
+<pre style="background:var(--sunk);padding:1em;border-radius:4px;overflow-x:auto;font-family:var(--mono);font-size:.85rem;margin:1.2em 0"><code style="background:none;padding:0">pyenv local 3.12.8 &amp;&amp; python -m venv .venv
+.venv/bin/pip install -r requirements.txt
+python scripts/prepare_data.py
+PYTHONPATH=src python scripts/build_kb_index.py      # ~5 min, M4 GPU
+PYTHONPATH=src python scripts/train_classifier.py    # ~96 s
+PYTHONPATH=src python scripts/evaluate.py            # holdout, once
+streamlit run app.py</code></pre>
+
+<p class="k">Retrain locally rather than copying heads.joblib — joblib pickles are not safe across scikit-learn versions.</p>
+
+</div>
