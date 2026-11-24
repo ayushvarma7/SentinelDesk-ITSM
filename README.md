@@ -241,39 +241,6 @@ figure is the more conservative estimate.
 - **Training, retrieval and tuning use the knowledge base only.** Only knowledge-base answers are ever indexed or shown.
 - **The dataset's 20k variant is never mixed in.** It shares 8,399 ticket bodies with the main file.
 
-## Honest limits
-
-- **The tickets are synthetic customer-support data for a software company, not real university IT tickets.** Some
-  drafts mention products that a university desk would not support. Routing and escalation behaviour carry over;
-  the wording of replies would need a real knowledge base.
-- **German routing is weaker:** queue macro-F1 is 0.49 for German, against 0.69 for English.
-- **Root-cause grouping can be too broad.** Unrelated tickets in the same queue sometimes join an active major
-  incident. For example, a Wi-Fi ticket can join a VPN outage.
-- **There is no real authentication.** The sign-in uses two hard-coded demo accounts, the admin console and its Rules
-  page are open to anyone who can reach them, and the API trusts the email
-  address it receives.
-- **Problem grouping can still merge unrelated German tickets.** One pair in the demo data (a web-shop outage and a
-  billing question) scores 0.908 and is grouped as one problem; no threshold removes it without also splitting real
-  repeats. The console shows every grouped ticket, so a person can see and correct it.
-- **Tickets live in memory.** Restarting the API resets them to the 45 seed tickets and rebuilds the problem database
-  from them, so the two always agree (`SD_KEEP_PROBLEMS=1` keeps the database file instead). Saved routing rules
-  persist in `artifacts/assignment_rules.json`.
-- **Rule keywords are plain text matches.** A keyword such as "login" also matches "logins"; there is no stemming or
-  regular-expression support yet.
-- **Follow-up messages from the portal's assistant are stored only in the browser.** The API has no follow-up
-  endpoint yet.
-- **No ITSM tool integration exists.** SentinelDesk does not connect to BMC Helix, ServiceNow or Jira today.
-
-## Future work
-
-These are ideas, not built features.
-
-- **Connect to an ITSM tool through its REST API**, for example BMC Helix. Start in suggestion-only mode: SentinelDesk
-  suggests the assignment group and priority on the incident record, and the agent accepts or overrides it. Nothing
-  is changed automatically until the suggestions have earned trust.
-- **Measure the value before rollout.** Compare reassignment count, time to assign and time to resolve for the same
-  queues, before and after the suggestions are switched on.
-
 ## Repository
 
 ```
