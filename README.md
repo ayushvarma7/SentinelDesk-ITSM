@@ -8,6 +8,8 @@ with a one-line reason, and drafts replies only when past resolved tickets back 
 
 [![Watch the 2-minute SentinelDesk walkthrough on YouTube](docs/demo-thumbnail.jpg)](https://youtu.be/Jkw_iVzGSQM)
 
+<p align="center"><b>▶ <a href="https://youtu.be/Jkw_iVzGSQM">Watch the 2-minute walkthrough on YouTube</a></b></p>
+
 ![Overview](docs/screenshots/overview.jpg)
 
 ## What it does, in ITSM terms
