@@ -1,4 +1,4 @@
-"""OWNER: P2. Score drafts on holdout tickets, end to end.
+"""Score drafts on holdout tickets, end to end.
 
 Runs N English + N German holdout tickets through the real pipeline and scores
 the drafts on the things that decide whether the grounding story holds:

@@ -1,4 +1,4 @@
-"""Three-tier gate outcome (Track A): AUTO_DRAFT_READY / HUMAN_REVIEW / ESCALATE_ONCALL.
+"""Three-tier gate outcome: AUTO_DRAFT_READY / HUMAN_REVIEW / ESCALATE_ONCALL.
 
     PYTHONPATH=src python tests/test_status.py
 

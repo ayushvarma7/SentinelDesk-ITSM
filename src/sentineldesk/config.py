@@ -19,12 +19,12 @@ EMBED_DIM = 384
 QUERY_PREFIX = "query: "
 PASSAGE_PREFIX = "passage: "
 
-LLM_MODEL = "gemini-3.5-flash-lite"   # P2.1: 2.5-* are retired (404); 3.5-flash 504s on capacity
+LLM_MODEL = "gemini-3.5-flash-lite"   # 2.5-* are retired (404); 3.5-flash 504s on capacity
 LLM_MAX_TOKENS = 1024
 LLM_TIMEOUT_MS = 20000   # past this, fall back to extractive rather than stall the UI
 
-# --- triage classifier (Track A) ------------------------------------------------
-# Frozen on the KB validation slice (docs/p1_workdone.md): word TF-IDF || e5 query embedding.
+# --- triage classifier ------------------------------------------------
+# Frozen on the KB validation slice: word TF-IDF || e5 query embedding.
 HEADS_PATH = ARTIFACTS / "heads.joblib"
 KB_QUERY_EMB_PATH = ARTIFACTS / "kb_query_embeddings.npy"   # KB encoded with is_query=True, for the classifier
 CLASSIFIER_C = 32.0
@@ -33,7 +33,7 @@ HIGH_PRIORITY_TARGET_RECALL = 0.80   # P(high) threshold is the highest one reac
 HIGH_PRIORITY_THRESHOLD = 0.25       # value tuned by scripts/train_classifier.py (also stored in heads.joblib)
 VAL_FRACTION = 0.10                  # first 10% of RandomState(RANDOM_SEED).permutation(len(kb)); gate tuning reuses it
 
-# --- root cause (Track A, ITIL: many Incidents -> one Problem -> fixed by Changes) ----
+# --- root cause (ITIL: many Incidents -> one Problem -> fixed by Changes) ----
 # Incident vs Problem is a relationship, not a wording difference (712 of 760 type errors are
 # Incident<->Problem), so the critical-escalation rule treats both as "service is broken".
 # Validation: high-priority Incident recall 0.803 (Incident only) -> 0.882 (Incident or Problem).
@@ -44,8 +44,8 @@ CRITICAL_SCORE_MIN = 0.20
 # Similarity (e5 query vectors) above which two issues are treated as the same root cause.
 # Calibrated on KB issue pairs from different queues with no shared tag: p90=0.891, p99=0.917.
 # 0.88: tests/test_major_incident.py (4 core problems EN+DE, 5 one-offs) gives grouping and
-# banner precision 1.00 with no premature banner, and P3's attack-table burst case passes
-# (its German VPN report scores 0.884). 0.885+ misses that report; P3's flat 0.86 burst had
+# banner precision 1.00 with no premature banner, and the attack table's burst case passes
+# (its German VPN report scores 0.884). 0.885+ misses that report; the flat 0.86 burst trigger had
 # banner precision 0.16 and raised 4 banners before a 3rd report of the same problem.
 ROOT_CAUSE_GROUP_SIM = 0.88
 # Optional lower bar when both issues share a predicted queue. DISABLED (None): it merged Outlook,
@@ -54,10 +54,10 @@ ROOT_CAUSE_GROUP_SIM = 0.88
 # as different queues, exactly where this rule never applies.)
 ROOT_CAUSE_GROUP_SIM_SAME_QUEUE = None
 # What raises the major-incident banner: "root_cause" (grouping above, 3+ issues) or "burst"
-# (P3's burst.py: direct cosine >= BURST_SIM to 2 earlier tickets of any type).
+# (burst.py: direct cosine >= BURST_SIM to 2 earlier tickets of any type).
 MAJOR_INCIDENT_SOURCE = "root_cause"
 
-# --- problem database (Track A, store.py) -------------------------------------------
+# --- problem database (store.py) -------------------------------------------
 # SQLite log of every live triage + registry of distinct problems. Git-ignored (artifacts/).
 DB_PATH = Path(os.getenv("SD_DB_PATH", str(ARTIFACTS / "sentineldesk.db")))
 DB_ENABLED = os.getenv("SD_DB", "1") == "1"
@@ -77,7 +77,7 @@ ROOT_CAUSE_MIN_WORDS = 3             # too-short tickets ("help", emoji) are nev
 # KB issues' best related Problem: p10=0.899, median 0.923. 0.89 sits just above unrelated p99.
 ROOT_CAUSE_LINK_MIN_SIM = 0.89
 
-# --- retrieval (Track B / P2) -----------------------------------------------
+# --- retrieval -----------------------------------------------
 KB_EMB_PATH = ARTIFACTS / "kb_embeddings.npy"        # KB encoded with is_query=False, for retrieval
 KB_META_PATH = ARTIFACTS / "kb_meta.parquet"         # same row order as KB_EMB_PATH
 
@@ -94,7 +94,7 @@ DEDUP_SIMILARITY = 0.98             # drop a precedent this close to one already
 # over. 0 disables; evaluation passes 0 so metrics measure unaided retrieval.
 CROSS_LINGUAL_SLOTS = 1
 
-# Hybrid search (Track A): weight of the keyword (TF-IDF cosine) ranking in reciprocal-rank fusion
+# Hybrid search: weight of the keyword (TF-IDF cosine) ranking in reciprocal-rank fusion
 # with the e5 ranking. 0 = dense only. Displayed scores and gate floors stay e5 cosine.
 # Chosen by scripts/hybrid_check.py on the KB validation slice.
 HYBRID_LEXICAL_WEIGHT = 0.0
@@ -104,9 +104,7 @@ KB_LEX_PATH = ARTIFACTS / "kb_tfidf.npz"            # keyword index, row-aligned
 # EDA: the hard rule (high + Incident) alone fires on 17.2% of KB tickets, which is
 # already the top of the 15-25% target band. Keep the soft thresholds tight or the
 # overall escalation rate balloons past 40% and the copilot looks useless.
-# Owned by P3. Two sources, on purpose (docs/p3_workdone.md §3):
-#
-# Similarity floors: calibrated by P2 on HAND-TYPED tickets, not KB percentiles. The dataset is
+# Similarity floors: calibrated on HAND-TYPED tickets, not KB percentiles. The dataset is
 # synthetic and its own tickets sit unusually close to the KB (validation top-1 p25 0.918), while
 # hand-typed text scores: in-domain 0.845-0.906 | off-domain 0.855-0.864 | gibberish 0.833-0.851 |
 # off-topic (a recipe) 0.823. A KB-derived floor escalates 100% of judge input, so these are only
@@ -136,8 +134,8 @@ UNSUPPORTED_ACTION_PATTERNS = [
     r"\bwire transfer\b", r"\büberweisung\b",
 ]
 
-# --- safety gate (P3) ------------------------------------------------------
-# Risk regexes live in gate.RISK_PATTERNS (owned by P3, tested by tests/test_adversarial.py).
+# --- safety gate ------------------------------------------------------
+# Risk regexes live in gate.RISK_PATTERNS (tested by tests/test_adversarial.py).
 MIN_LETTERS = 3                      # fewer letters than this (emoji only, bare URL) -> human
 
 # Burst / major-incident detector (burst.py). A ticket is part of a burst when at least

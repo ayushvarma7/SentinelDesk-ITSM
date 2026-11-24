@@ -1,8 +1,8 @@
-"""OWNER: P2, with P3. Re-pick the gate's confidence floors against BOTH distributions.
+"""Re-pick the gate's confidence floors against BOTH distributions.
 
     PYTHONPATH=src python scripts/gate_calibrate.py
 
-Why this exists. scripts/gate_sweep.py (P3) sweeps on the 10% KB validation slice and chose
+Why this exists. scripts/gate_sweep.py sweeps on the 10% KB validation slice and chose
 type 0.75 / queue 0.50 / priority 0.70. Those are correct for the data they were measured on,
 but the dataset is synthetic: its tickets sit closer to the KB and draw higher classifier
 confidence than anything a person types. Measured on dev: that setting auto-drafts 28% of
@@ -16,14 +16,14 @@ So the same precompute-then-sweep machinery runs over two sets at once:
   hand-typed   tests/handtyped_calibration.json — written by hand, no labels, but each ticket
                is marked as one that SHOULD auto-draft or one the gate MUST stop.
 
-Selection rule, fixed BEFORE running (extends P3's by two clauses):
-  1. validation: at least 95% of true high-priority Incidents escalated   [P3, safety]
-  2. validation: at least 25% of tickets auto-drafted                     [P3, usefulness]
+Selection rule, fixed BEFORE running (extends the original sweep's by two clauses):
+  1. validation: at least 95% of true high-priority Incidents escalated   [safety]
+  2. validation: at least 25% of tickets auto-drafted                     [usefulness]
   3. hand-typed: every expect=escalate ticket escalated                   [NEW, safety]
   4. hand-typed: at least 60% of expect=auto tickets auto-drafted         [NEW, demo works]
-  5. then the highest queue accuracy among auto-drafted validation tickets [P3, tiebreak]
+  5. then the highest queue accuracy among auto-drafted validation tickets [tiebreak]
 
-Similarity floors stay fixed, as in P3's sweep — they are already hand-typed calibrated.
+Similarity floors stay fixed, as in the first sweep — they are already hand-typed calibrated.
 Writes reports/gate_calibrate.csv and reports/gate_calibrate.json.
 """
 import itertools
@@ -42,7 +42,7 @@ from sentineldesk.schema import Prediction
 REPORTS = config.ROOT / "reports"
 HANDTYPED = Path(__file__).resolve().parent.parent / "tests" / "handtyped_calibration.json"
 
-# Retargeted after the Track A / Track C merges. The type and priority floors are now 0.0 in
+# Retargeted after the critical-score rule and the drafting stage landed. The type and priority floors are now 0.0 in
 # config — critical_score carries the safety job — so sweeping them is sweeping nothing. The
 # knobs that actually move the gate today are the queue floor, the critical-score threshold,
 # and the top-1 similarity floor.

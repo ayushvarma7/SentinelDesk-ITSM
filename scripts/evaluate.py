@@ -7,7 +7,7 @@ by scripts/train_classifier.py).
 
 Current sections:
   * triage heads: macro-F1, accuracy, ECE per head; high-priority Incident recall
-  * gate + retrieval + latency (added by P2 once retrieve/generate landed): escalation recall on
+  * gate + retrieval + latency (added once retrieve/generate landed): escalation recall on
     high-priority Incidents, auto-draft share, retrieval agreement, p50/p95 end-to-end latency.
     That section samples SD_EVAL_PIPELINE_N tickets (default 200) because it runs the full pipeline.
 
@@ -37,7 +37,7 @@ def ece(conf: np.ndarray, correct: np.ndarray, bins: int = 10) -> float:
 
 
 def pipeline_section(inputs, labels) -> dict:
-    """OWNER: P2. End-to-end gate, retrieval and latency numbers for the README.
+    """End-to-end gate, retrieval and latency numbers for the README.
 
     Runs the real pipeline, so it is sampled rather than full-holdout. Two
     settings matter for honesty:

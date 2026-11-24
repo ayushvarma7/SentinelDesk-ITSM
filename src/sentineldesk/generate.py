@@ -1,4 +1,4 @@
-"""Track C (P2). Grounded draft replies.
+"""Grounded draft replies.
 
 Three layers, in order of trust:
 
@@ -27,8 +27,8 @@ LANG_NAME = {"en": "English", "de": "German"}
 # Dataset anonymisation tokens come in TWO shapes, not one. Measured on the
 # 22,863 KB answers: 10,956 carry <...> tokens (<tel_num> 8,339, <name> 4,906,
 # <acc_num> 1,986) and 2,696 carry [...] ones ([Name] 2,046, [name] 562,
-# [tel_num] 408, [Telefonnummer] 207). The execution plan's scrub() only
-# specified the angle-bracket form, so ~12% of answers would still leak.
+# [tel_num] 408, [Telefonnummer] 207). A scrub that only
+# handled the angle-bracket form would still leak in ~12% of answers.
 _TOKEN = re.compile(r"<\s*/?\s*[A-Za-z_][A-Za-z_0-9 -]{1,20}\s*/?\s*>")
 
 # Same, square-bracketed — but never our own [TKT-01234] / [LIVE-00001]
@@ -72,7 +72,7 @@ Return JSON: {{"reply": str, "cited_ticket_ids": [str], "grounded": bool,
 "unsupported_requests": [str]}}"""
 
 
-# P3's pii.mask() rewrites real PII into these same angle-bracket tokens before
+# pii.mask() rewrites real PII into these same angle-bracket tokens before
 # the ticket reaches the LLM, so the model sees — and sometimes echoes — them.
 # Deleting those would garble the sentence ("we will call  once account  is
 # verified"), so they are spoken in words instead. Tokens that are dataset

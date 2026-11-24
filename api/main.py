@@ -626,7 +626,7 @@ def metrics() -> dict:
             "auto_share_validation": gs.get("chosen", {}).get("auto_share"),
         },
         "major_incident": {"active": bool(burst_ids), "ticket_ids": burst_ids},
-        # Track A: holdout model numbers (scripts/evaluate.py) and the problem database
+        # holdout model numbers (scripts/evaluate.py) and the problem database
         "model": {
             "n_holdout": tm.get("n_holdout"),
             "macro_f1": {h: (tm.get(h) or {}).get("macro_f1") for h in ("type", "queue", "priority", "language")},
@@ -649,7 +649,7 @@ def _db_stats() -> dict | None:
         return None
 
 
-# ---------------------------------------------------------------- problem database (Track A, store.py)
+# ---------------------------------------------------------------- problem database (store.py)
 class ResolveIn(BaseModel):
     resolution: str
     agent: Optional[str] = "You"

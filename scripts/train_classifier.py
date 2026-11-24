@@ -1,4 +1,4 @@
-"""Train the Track A triage heads (type, queue, priority, language) on the KB split.
+"""Train the triage heads (type, queue, priority, language) on the KB split.
 
     PYTHONPATH=src python scripts/train_classifier.py
 

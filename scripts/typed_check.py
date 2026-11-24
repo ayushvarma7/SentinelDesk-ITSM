@@ -1,7 +1,7 @@
-"""Track A. Hand-typed demo tickets through the real pipeline, scored by intended outcome.
+"""Hand-typed demo tickets through the real pipeline, scored by intended outcome.
 
     PYTHONPATH=src python scripts/typed_check.py            # current config
-    SD_GATE=p3 PYTHONPATH=src python scripts/typed_check.py # P3's previous floors, for comparison
+    SD_GATE=p3 PYTHONPATH=src python scripts/typed_check.py # the earlier gate floors, for comparison
 
 Judges type their own tickets, and hand-typed text scores differently from the synthetic dataset
 (lower similarity, lower queue confidence). This set is a CHECK, never used to pick thresholds:

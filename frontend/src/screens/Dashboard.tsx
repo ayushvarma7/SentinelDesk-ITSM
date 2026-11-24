@@ -1,4 +1,4 @@
-// Rebuild of Poornima's "Operations dashboard" (views/dashboard.py) on our API.
+// Operations dashboard.
 // Totals/recall come from GET /metrics; everything else is computed client-side from GET /tickets.
 import { useMemo, type ReactNode } from 'react'
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
@@ -8,7 +8,7 @@ import { useT } from '../i18n'
 import { Skeleton } from '../ui'
 import { MetricCard, PageHeader, StatStrip } from '../components/kit'
 
-// Her altair scales, verbatim: priority = NU red / amber / slate grey; type = Streamlit's categorical theme.
+// Colour scales: priority = NU red / amber / slate grey; type = a four-colour categorical set.
 const PRI = ['high', 'medium', 'low'] as const
 const PRI_COLOR: Record<string, string> = { high: '#C8102E', medium: '#E2A33B', low: '#9AA6B5' }
 const TYPES = ['Change', 'Incident', 'Problem', 'Request'] as const
@@ -35,7 +35,7 @@ const f1 = (v: number | null | undefined) => (v == null ? '—' : v.toFixed(3))
 const holdoutHint = (m: Metrics | null) =>
   m?.model?.n_holdout ? `Holdout, ${m.model.n_holdout.toLocaleString()} unseen tickets (scripts/evaluate.py)` : 'Run scripts/evaluate.py'
 
-/** Track A numbers from GET /metrics: language, gate tiers, retrieval, English vs German, problem database. */
+/** Model numbers from GET /metrics: language, gate tiers, retrieval, English vs German, problem database. */
 function ModelExtras({ m }: { m: Metrics }) {
   const g = m.model?.gate ?? {}
   const sh = g.status_share

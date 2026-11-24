@@ -1,4 +1,4 @@
-"""Track A. Can the German queue/priority gap be closed? Validation slice only (holdout untouched).
+"""Can the German queue/priority gap be closed? Validation slice only (holdout untouched).
 
     PYTHONPATH=src python scripts/german_experiments.py
 

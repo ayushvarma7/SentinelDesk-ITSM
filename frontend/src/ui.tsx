@@ -12,7 +12,7 @@ export const PRIO_STYLE: Record<Priority, { row: string; bar: string; badge: str
 
 export const P_CODE: Record<Priority, string> = { high: 'P1', medium: 'P2', low: 'P3' }
 
-/** Priority pill. `code` shows her ServiceNow-style P1/P2/P3 first. */
+/** Priority pill. `code` shows the ServiceNow-style P1/P2/P3 first. */
 export function PriorityBadge({ p, code = false }: { p: Priority; code?: boolean }) {
   const t = useT()
   const s = PRIO_STYLE[p] ?? PRIO_STYLE.medium

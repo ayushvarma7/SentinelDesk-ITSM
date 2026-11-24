@@ -1,8 +1,8 @@
-"""The contract every track codes against: raw ticket in, TriageResult out.
+"""The contract between the pipeline and everything that calls it: raw ticket in, TriageResult out.
 
-Right now `triage()` returns plausible fake data so Track D can build the whole
-console before a single model exists. Replace one stage at a time by flipping
-its entry in STAGES — never by changing the signature.
+Each stage can be switched to a stub through its entry in STAGES, and the classify and
+retrieve stages fall back to stubs when their artifacts are missing, so the apps still run
+without models. The signature never changes.
 """
 from __future__ import annotations
 
@@ -14,16 +14,16 @@ from .burst import BurstDetector
 from .text import build_text
 from .schema import Precedent, Prediction, TriageResult
 
-# Flip each to True as that track lands. Keeps the app runnable the whole way.
+# Set a stage to False to substitute a stub for it.
 STAGES = {
-    "embed": True,       # Track A wired embed.encode (Track B owns the file)
-    "classify": True,    # Track A: falls back to the stub if artifacts/heads.joblib is missing
-    "retrieve": True,    # Track B: real index, stub fallback if artifacts are missing
-    "generate": True,    # Track C: Gemini when a key exists, extractive fallback otherwise
+    "embed": True,       # embed.encode
+    "classify": True,    # falls back to the stub if artifacts/heads.joblib is missing
+    "retrieve": True,    # real index, stub fallback if artifacts are missing
+    "generate": True,    # Gemini when a key exists, extractive fallback otherwise
 }
 
 
-# Live-ticket memory for the major-incident banner (P3). Scripts call BURST.clear()
+# Live-ticket memory for the major-incident banner. Scripts call BURST.clear()
 # between evaluation tickets so they do not trigger it.
 BURST = BurstDetector()
 
@@ -123,7 +123,7 @@ def triage(subject: str | None, body: str | None,
         precedents = _stub_precedents()
     latency["retrieve"] = (time.perf_counter() - t) * 1000
 
-    # Root cause (Track A): only for issues (Incident/Problem), only with a real embedding.
+    # Root cause: only for issues (Incident/Problem), only with a real embedding.
     root_cause = None
     t = time.perf_counter()
     if qvec is not None and preds["type"].label in config.CRITICAL_TYPES:
@@ -135,9 +135,9 @@ def triage(subject: str | None, body: str | None,
     burst = (BURST.check(qvec, now=received_at, sim=(thresholds or {}).get("burst_sim")) if track_burst
              else {"active": False, "related": [], "live_id": None, "max_sim": 0.0})
     if config.MAJOR_INCIDENT_SOURCE == "root_cause" and track_burst:
-        # The banner follows the root-cause group (issues only, queue-aware linking), not P3's
-        # flat-cosine trigger, which fired on unrelated tickets in tests/test_major_incident.py.
-        # P3's detector still records every ticket and reports max_sim for the console.
+        # The banner follows the root-cause group (issues only, queue-aware linking), not the
+        # flat-cosine burst trigger, which fired on unrelated tickets in tests/test_major_incident.py.
+        # The burst detector still records every ticket and reports max_sim for the console.
         group = root_cause.group_ticket_ids if root_cause is not None else []
         active = root_cause is not None and root_cause.suggest_problem
         burst = {**burst, "active": active, "related": group[:-1] if active else [],
@@ -199,7 +199,7 @@ def triage(subject: str | None, body: str | None,
         engine=engine,
     )
 
-    # Track A: log every LIVE triage and match-or-add its problem in the database (store.py).
+    # log every LIVE triage and match-or-add its problem in the database (store.py).
     # Evaluation passes track_burst=False and is never recorded. Attacks and empty tickets are
     # logged but not registered as problems. A database error must never break triage.
     # record=None -> record live tickets only; record=False lets a caller (e.g. demo seeding) triage
@@ -265,7 +265,7 @@ def resolve_ticket(subject: str | None, body: str | None, resolution: str,
                                        language=language, queue=queue, type_=type_,
                                        resolved_by=resolved_by)
     problem_id = None
-    if config.DB_ENABLED and STAGES["embed"]:         # Track A: mark the problem resolved in the database
+    if config.DB_ENABLED and STAGES["embed"]:         # mark the problem resolved in the database
         try:
             from . import embed, store
             problem_id = store.mark_resolved(embed.encode([build_text(subject, body)], is_query=True)[0],

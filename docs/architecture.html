@@ -168,7 +168,7 @@ ul{max-width:66ch;padding-left:1.2em}li{margin-bottom:.4em}
 <ul>
 <li><b>Citation check</b> — every cited id must be in the retrieved set. An id in the prose but missing from the model's own list still counts; an id in neither is a fabrication.</li>
 <li><b>Figure guard</b> — any number carrying a currency symbol, a percent sign or a time unit that appears in no precedent is flagged. Only 0.3% of KB answers contain such a figure, so this almost never false-positives.</li>
-<li><b>Scrub</b> — 48% of KB answers carry anonymisation tokens. They come in two shapes: 10,956 answers use <span class="m">&lt;tel_num&gt;</span>-style tokens and 2,696 use <span class="m">[Name]</span>-style ones. The execution plan specified only the first, so roughly 12% of answers would still have leaked.</li>
+<li><b>Scrub</b> — 48% of KB answers carry anonymisation tokens. They come in two shapes: 10,956 answers use <span class="m">&lt;tel_num&gt;</span>-style tokens and 2,696 use <span class="m">[Name]</span>-style ones. A scrub that handled only the first shape would have left roughly 12% of answers leaking.</li>
 </ul>
 
 <div class="note"><p><b>The scrub/PII collision.</b> PII masking rewrites real data <i>into</i> <span class="m">&lt;email&gt;</span> and <span class="m">&lt;tel_num&gt;</span> before the ticket reaches the model. Scrub was deleting exactly those shapes from the reply, so an echoed token produced <i>"we updated the details for and will call once account is verified."</i> Masked-PII tokens now become readable phrases in the reply's own language; dataset noise is still removed. Neither layer could see this alone.</p></div>
@@ -284,7 +284,7 @@ python scripts/prepare_data.py
 PYTHONPATH=src python scripts/build_kb_index.py      # ~5 min, M4 GPU
 PYTHONPATH=src python scripts/train_classifier.py    # ~96 s
 PYTHONPATH=src python scripts/evaluate.py            # holdout, once
-streamlit run app.py</code></pre>
+./run.sh app                                         # API :8000, admin :5173, customer site :5174</code></pre>
 
 <p class="k">Retrain locally rather than copying heads.joblib — joblib pickles are not safe across scikit-learn versions.</p>
 

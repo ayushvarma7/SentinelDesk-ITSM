@@ -1,4 +1,4 @@
-"""Root-cause grouping (Track A). Needs artifacts/heads.joblib + kb_query_embeddings.npy.
+"""Root-cause grouping. Needs artifacts/heads.joblib + kb_query_embeddings.npy.
 
     PYTHONPATH=src python tests/test_rootcause.py
 """
@@ -70,7 +70,7 @@ def test_pipeline_escalates_third_outlook_ticket():
         return
     print(f"  group size {rc.group_size}, suggest_problem={rc.suggest_problem}")
     if rc.suggest_problem:
-        # Either outage reason is fine: P3's burst banner takes precedence, and the root-cause
+        # Either outage reason is fine: the burst banner takes precedence, and the root-cause
         # reason is suppressed when the banner already fired (no duplicate messages).
         reasons = " ".join(last.escalation_reasons)
         assert last.escalate and ("shared root cause" in reasons or "major incident" in reasons), reasons

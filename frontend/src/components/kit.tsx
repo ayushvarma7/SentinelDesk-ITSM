@@ -1,4 +1,4 @@
-// Building blocks mirroring Poornima's Streamlit components (.ph header, st.metric, .stats strip, multiselect).
+// Shared building blocks: page header, metric card, stat strip, multiselect.
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Check, ChevronDown, X } from 'lucide-react'
 

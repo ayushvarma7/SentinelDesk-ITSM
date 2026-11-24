@@ -1,11 +1,9 @@
-"""Track A owns this file.
-
-LogisticRegression heads (type, queue, priority, language) over
+"""LogisticRegression heads (type, queue, priority, language) over
 [word TF-IDF (1-2 grams) || e5 query embedding]. class_weight="balanced" keeps the
 21x-imbalanced queue head honest; a P(high) threshold tuned on a KB validation slice
 buys high-priority recall.
 
-Frozen setting (chosen on validation, see docs/p1_workdone.md): C=32, embedding weight 1.0,
+Frozen setting (chosen on validation): C=32, embedding weight 1.0,
 P(high) threshold 0.25.
 
 Embedding convention: the classifier is trained on KB vectors encoded with is_query=True,

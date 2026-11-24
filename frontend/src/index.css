@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Palette from Poornima's Streamlit theme (sentinel_ui/common.py) */
+  /* Northeastern palette: red, black, white, warm gray */
   --color-navy: #0E1A2B;      /* --ink */
   --color-navy-2: #172A44;    /* --ink2 */
   --color-navy-3: #24395A;

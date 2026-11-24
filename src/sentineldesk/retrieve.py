@@ -1,12 +1,12 @@
-"""Track B (P2). Precedent retrieval over the KB split.
+"""Precedent retrieval over the KB split.
 
-Exact cosine search with numpy, deliberately — not faiss. P1 measured that on
-macOS faiss and torch each bundle libomp, and importing faiss first aborts the
+Exact cosine search with numpy, deliberately — not faiss. On
+macOS, faiss and torch each bundle libomp, and importing faiss first aborts the
 process with OMP: Error #15. The pipeline imports torch, so faiss is out. At
 22,863 x 384 an exact matmul is about 0.9 ms per query, so there is nothing to
 gain anyway.
 
-Two embedding files exist on purpose (docs/p1_workdone.md §5.3):
+Two embedding files exist on purpose:
   kb_embeddings.npy        KB encoded as passages  -> this index
   kb_query_embeddings.npy  KB encoded as queries   -> the classifier's features
 Never point one at the other.
@@ -181,7 +181,7 @@ def _row_to_precedent(row: pd.Series, score: float) -> Precedent:
 
 
 # --------------------------------------------------------------------------
-# Hybrid search (Track A): keyword cosine (TF-IDF) fused with embedding cosine.
+# Hybrid search: keyword cosine (TF-IDF) fused with embedding cosine.
 #
 # e5 captures the topic but can drop the one keyword that matters ("VPN keeps dropping ... for our
 # hospital staff" returned hospital *security* tickets). Reciprocal-rank fusion (RRF) of the two

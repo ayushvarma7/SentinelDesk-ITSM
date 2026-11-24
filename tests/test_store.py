@@ -1,4 +1,4 @@
-"""Problem database (Track A, store.py): log every live ticket, add new problems, match repeats.
+"""Problem database (store.py): log every live ticket, add new problems, match repeats.
 
     PYTHONPATH=src python tests/test_store.py
 

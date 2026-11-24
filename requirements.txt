@@ -16,7 +16,7 @@ torch==2.5.1
 sentence-transformers==3.3.1
 faiss-cpu==1.9.0
 
-# generation — team plan uses Gemini (P2.1); anthropic kept only as a fallback backend
+# generation — Gemini; anthropic kept only as a fallback backend
 google-genai==3.6.1              # 1.x predates the Gemini 3.x models and hangs instead of erroring
 anthropic==0.40.0
 python-dotenv==1.0.1

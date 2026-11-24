@@ -1,6 +1,6 @@
-"""OWNER: P2. Retrieval sanity on holdout tickets, passage-side index.
+"""Retrieval sanity on holdout tickets, passage-side index.
 
-Prints top-1 similarity percentiles (P3 needs these for min_sim), label
+Prints top-1 similarity percentiles (the gate's min_sim comes from these), label
 agreement and the cross-lingual share.
 
 This is an EVALUATION script, so it is allowed to read holdout labels — same
@@ -51,7 +51,7 @@ def main() -> None:
     out.mkdir(parents=True, exist_ok=True)
     json.dump(res, open(out / "retrieval_check.json", "w"), indent=2)
     print(json.dumps(res, indent=2))
-    print("\nSuggested min_sim for P3 (p10):", res["top1_sim_percentiles"]["p10"])
+    print("\nSuggested min_sim (p10):", res["top1_sim_percentiles"]["p10"])
 
 
 if __name__ == "__main__":

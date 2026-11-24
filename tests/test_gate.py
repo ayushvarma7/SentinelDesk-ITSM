@@ -1,4 +1,4 @@
-"""OWNER: P3. Pure-function tests for the gate, PII masking and burst detector (no models).
+"""Pure-function tests for the gate, PII masking and burst detector (no models).
 
     PYTHONPATH=src python tests/test_gate.py      # or: pytest tests/
 """

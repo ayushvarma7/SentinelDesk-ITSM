@@ -1,4 +1,4 @@
-"""OWNER: P3. Runs the 25 adversarial tickets + a burst scenario through the REAL pipeline
+"""Runs the 25 adversarial tickets + a burst scenario through the REAL pipeline
 (pipeline.triage) and writes the attack table for the README/demo: reports/attack_table.md
 
     PYTHONPATH=src python scripts/attack_table.py

@@ -40,7 +40,8 @@ No model is consulted for the decision itself.
 | `src/sentineldesk/gate.py` | Escalation rules |
 | `src/sentineldesk/generate.py` | Prompt, verification, extractive fallback |
 | `src/sentineldesk/pipeline.py` | `triage()`, `resolve_ticket()` |
-| `sentinel_ui/backend.py` | `TriageResult` → the dict the console renders |
+| `api/main.py` | FastAPI backend: runs `triage()`, holds the tickets, serves the admin console and the customer site |
+| `api/assignment_rules.py` | Editable routing rules applied after the model's prediction |
 
 ---
 
@@ -144,8 +145,8 @@ Three layers, in increasing order of trust.
 | Scrub | Strips anonymisation tokens from anything a customer sees. |
 
 **The scrub subtlety.** 48% of KB answers carry anonymisation tokens, in *two* shapes: 10,956
-answers use `<tel_num>`-style tokens, 2,696 use `[Name]`-style ones. The execution plan
-specified only the first, so ~12% of answers would still have leaked. 809 answers also store
+answers use `<tel_num>`-style tokens, 2,696 use `[Name]`-style ones. A scrub that
+handled only the first shape would have left ~12% of answers leaking. 809 answers also store
 newlines as a literal backslash-n.
 
 **The scrub/PII collision.** PII masking rewrites real data *into* `<email>` and `<tel_num>`
@@ -307,7 +308,7 @@ python scripts/prepare_data.py
 PYTHONPATH=src python scripts/build_kb_index.py      # ~5 min on an M4 GPU
 PYTHONPATH=src python scripts/train_classifier.py    # ~96 s
 PYTHONPATH=src python scripts/evaluate.py            # holdout, once per frozen model
-streamlit run app.py
+./run.sh app                                         # API :8000, admin console :5173, customer site :5174
 ```
 
 Retrain locally rather than copying `heads.joblib` — joblib pickles are not safe across
@@ -320,7 +321,8 @@ scikit-learn versions.
 | `scripts/evaluate.py` | `reports/triage_metrics.json` — heads, gate, retrieval, latency |
 | `scripts/retrieval_check.py` | `reports/retrieval_check.json` — similarity percentiles |
 | `scripts/draft_eval.py` | `reports/draft_eval.json` — citation and grounding metrics |
-| `scripts/gate_sweep.py` | `reports/gate_sweep.json` — thresholds on validation |
+| `scripts/gate_sweep.py` | `reports/gate_sweep.json` — first threshold sweep on validation |
+| `scripts/escalation_sweep.py` | `reports/escalation_sweep.json` — the sweep behind the live gate setting |
 | `scripts/gate_calibrate.py` | `reports/gate_calibrate.json` — thresholds on both distributions |
 | `scripts/attack_table.py` | `reports/attack_table.md` — 26 adversarial cases |
 | `scripts/demo_live_kb.py` | Walks the frozen/live learning loop end to end |

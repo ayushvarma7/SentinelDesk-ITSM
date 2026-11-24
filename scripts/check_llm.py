@@ -1,4 +1,4 @@
-"""OWNER: P2 (P2.1). Prove the Gemini key works and the model name is current.
+"""Prove the Gemini key works and the model name is current.
 
 Run:  PYTHONPATH=src python scripts/check_llm.py
 """

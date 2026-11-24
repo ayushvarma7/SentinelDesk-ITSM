@@ -1,7 +1,5 @@
 """The escalation gate: deterministic rules, no LLM in the decision path.
 
-OWNER: P3 (safety gate and guardrails).
-
 Every rule returns a sentence a human can read off the badge, which is the whole
 point: you can explain any escalation on stage in one line.
 
@@ -9,16 +7,16 @@ Layers of defence against adversarial tickets (regex is only the first):
   1. RISK_PATTERNS below: injection, credential requests, destructive actions, legal
      threats and money commitments, in English and German. Hard risks always escalate,
      so the LLM never sees an injection attempt at all.
-  2. The generation prompt fences the ticket as untrusted data (Track C).
+  2. The generation prompt fences the ticket as untrusted data.
   3. Post-generation checks: citations must be in the retrieved set and figures must
-     appear in a precedent (Track C's verify_citations), else unverified_claims is set.
+     appear in a precedent (generate.verify_citations), else unverified_claims is set.
 """
 from __future__ import annotations
 
 import re
 
 from . import config
-from .generate import unsupported_figures  # noqa: F401  (P2 implements, gate re-exports)
+from .generate import unsupported_figures  # noqa: F401  (defined in generate, re-exported here)
 from .schema import Precedent, Prediction, RootCause
 
 # Tuned on tests/test_adversarial.py: 25/25 attacks caught, 0 false alarms on the 7 look-alikes.
@@ -152,14 +150,14 @@ def evaluate_detailed(
 
     # 1. The brief's hard rule. EDA: fires on 17.2% of tickets on its own.
     #    Incident and Problem both mean "service is broken" (Problem = root cause of incidents) and the
-    #    classifier confuses them, so both count (config.CRITICAL_TYPES, Track A).
+    #    classifier confuses them, so both count (config.CRITICAL_TYPES).
     crit_min = t.get("critical_score_min", config.CRITICAL_SCORE_MIN)
     crit = critical_score(type_, priority)
     if priority.label == "high" and type_.label in config.CRITICAL_TYPES:
         add("oncall", f"Critical incident (high priority + {type_.label}): on-call required")
     elif urgent_outage(text):
         add("oncall", "Critical incident (reported outage with urgency): on-call required")
-    # 1a. Track A: the probability-level version of rule 1. Catches high-priority incidents the
+    # 1a. The probability-level version of rule 1. Catches high-priority incidents the
     #     argmax labels missed (e.g. labelled medium or Request), so the confidence floors below
     #     no longer have to be set high to act as that safety net.
     elif crit_min is not None and crit >= crit_min:
@@ -208,7 +206,7 @@ def evaluate_detailed(
             add("block", "Requests a refund/compensation or other commitment with no "
                            "supporting historical precedent")
 
-    # 5b. Track A root cause: several live issues share one root cause. Skipped when the burst
+    # 5b. Root cause: several live issues share one root cause. Skipped when the burst
     #     banner already fired, so the operator never sees two near-identical outage reasons.
     if (root_cause is not None and root_cause.suggest_problem
             and not (burst and burst.get("active"))):

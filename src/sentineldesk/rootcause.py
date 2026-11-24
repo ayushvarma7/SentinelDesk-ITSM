@@ -1,4 +1,4 @@
-"""Track A owns this file. Root-cause grouping, following the ITIL model:
+"""Root-cause grouping, following the ITIL model:
 
     many Incidents  ->  one Problem (the root cause)  ->  fixed by one or more Changes
 
@@ -9,7 +9,7 @@ Two things per Incident/Problem ticket:
   2. Known history: the closest historical Problem and Change tickets in the KB, i.e. the probable
      root cause and how it was fixed before.
 
-Integration with RAG (Track B): known-history links search the SAME passage index as retrieval
+Integration with retrieval: known-history links search the SAME passage index as retrieval
 (retrieve.load_index(), artifacts/kb_embeddings.npy), restricted to Problem / Change rows, with the
 ticket's query vector, the proper e5 query->passage setup. No second KB copy is loaded. The pipeline
 then hands the known Problem to the drafter as an extra precedent, so a reply can cite the root cause.

@@ -1,4 +1,4 @@
-"""Track A. The backend database: a log of every live triage plus a registry of distinct problems.
+"""The backend database: a log of every live triage plus a registry of distinct problems.
 
 SQLite (standard library), one file: config.DB_PATH (artifacts/sentineldesk.db, git-ignored).
 

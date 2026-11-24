@@ -1,4 +1,4 @@
-"""Track A. Does keyword + vector (hybrid) retrieval beat vector-only? KB validation slice only.
+"""Does keyword + vector (hybrid) retrieval beat vector-only? KB validation slice only.
 
     PYTHONPATH=src python scripts/hybrid_check.py
 

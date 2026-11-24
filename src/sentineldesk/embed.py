@@ -1,11 +1,6 @@
-"""Track B owns this file.
-
-One encoder serves the classifier, the language head and the retrieval index.
-Encode the KB once, cache to artifacts/kb_embeddings.npy, and let Track A train
-on the file rather than calling the model.
-
-NOTE (Track A / P1): encode() implemented to the contract so the classifier stage can run.
-Track B keeps ownership; keep the signature and the prefix behaviour.
+"""One encoder serves the classifier, the language head and the retrieval index.
+Encode the KB once, cache to artifacts/kb_embeddings.npy, and let the classifier
+train on the file rather than calling the model. Keep the signature and the prefix behaviour.
 """
 from __future__ import annotations
 

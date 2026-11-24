@@ -1,6 +1,6 @@
 """Burst / major-incident detector.
 
-OWNER: P3. Keeps the query vectors of recent live tickets. When at least
+Keeps the query vectors of recent live tickets. When at least
 config.BURST_MIN_COUNT tickets (the current one included) inside
 config.BURST_WINDOW_S are within cosine config.BURST_SIM of the current ticket,
 the console shows a "Major incident" banner listing the related live ids and the

@@ -1,4 +1,4 @@
-"""Core-problem scenario (Track A + P3): repeated incidents -> one Problem + a major-incident promotion.
+"""Core-problem scenario: repeated incidents -> one Problem + a major-incident promotion.
 
     PYTHONPATH=src python tests/test_major_incident.py
 

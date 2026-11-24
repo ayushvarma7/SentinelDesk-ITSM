@@ -1,18 +1,18 @@
-"""OWNER: P3. Picks the gate's confidence thresholds on the 10% KB validation slice P1 held out
+"""Picks the gate's confidence thresholds on the 10% KB validation slice held out
 (never the holdout).
 
     PYTHONPATH=src python scripts/gate_sweep.py
 
 * Validation slice = first 10% of RandomState(RANDOM_SEED).permutation(len(kb)), the exact rows
   scripts/train_classifier.py kept out of heads.joblib, so classifier confidences are honest.
-* Retrieval is the REAL retrieve.search() (P2's index, queue filter, cross-lingual slot, dedup),
+* Retrieval is the REAL retrieve.search() (the retrieval index, queue filter, cross-lingual slot, dedup),
   with include_live=False and each ticket's own KB row removed from its results.
 * Every combination goes through the real gate.evaluate() with the retrieved precedents.
 
 Similarity floors are NOT swept here. KB tickets sit unusually close to each other (the dataset is
 synthetic): validation top-1 p25 is 0.931, but hand-typed in-domain tickets score 0.845-0.90.
 Floors picked from KB percentiles escalate 100% of what a person types. So MIN_TOP1_SIMILARITY /
-MIN_MEAN_TOP3_SIMILARITY stay at the hand-typed calibration in config.py (P2, docs/p3_workdone.md),
+MIN_MEAN_TOP3_SIMILARITY stay at the hand-typed calibration in config.py,
 and the sweep picks the confidence floors under those fixed similarity floors.
 
 Selection rule, fixed BEFORE the sweep ran:

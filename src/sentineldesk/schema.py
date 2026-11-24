@@ -91,16 +91,16 @@ class TriageResult:
     # True for both HUMAN_REVIEW and ESCALATE_ONCALL, so older callers keep their meaning.
     status: str = ""
 
-    # Added by P3 (defaults keep every existing constructor call valid).
+    # Safety-gate fields (defaults keep every existing constructor call valid).
     risks: list[str] = field(default_factory=list)       # gate.detect_risks(): "prompt_injection", ...
     burst: dict = field(default_factory=dict)            # {"active", "related", "live_id", "max_sim"}
-    root_cause: RootCause | None = None    # set for Incident/Problem tickets (Track A); optional, so old callers still work
+    root_cause: RootCause | None = None    # set for Incident/Problem tickets; optional, so old callers still work
 
     # Which path produced the draft: the model name, "extractive-fallback", or
     # None when the ticket was escalated and no draft was written.
     engine: str | None = None
 
-    # Track A: problem database entry (store.py); None when not recorded (evaluation runs).
+    # problem database entry (store.py); None when not recorded (evaluation runs).
     problem: ProblemMatch | None = None
 
     @property

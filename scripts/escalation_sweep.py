@@ -1,4 +1,4 @@
-"""Track A. Re-tunes the gate's confidence floors together with the critical-score rule (gate rule 1a)
+"""Re-tunes the gate's confidence floors together with the critical-score rule (gate rule 1a)
 on the 10% KB validation slice (never the holdout).
 
     PYTHONPATH=src python scripts/escalation_sweep.py
@@ -13,7 +13,7 @@ Same validation set-up as scripts/gate_sweep.py: held-out KB slice, real retriev
 ticket's own row removed, fixed hand-typed similarity floors.
 
 Selection rule, fixed BEFORE the sweep ran:
-  1. at least 95% of true high-priority Incidents escalated   (P3's safety bar, unchanged)
+  1. at least 95% of true high-priority Incidents escalated   (the safety bar, unchanged)
   2. queue accuracy on auto-drafted tickets at least 0.75     (routing quality of what we draft)
   3. then the largest auto-draft share (ties: higher auto queue accuracy)
 
@@ -117,7 +117,7 @@ def main() -> None:
                "verified_against_gate_evaluate": True}
     (REPORTS / "escalation_sweep.json").write_text(json.dumps(summary, indent=2, default=float))
     print(f"[sweep] {len(df)} combinations, {len(ok)} meet the rule")
-    print(f"[sweep] previous (P3) : {p3}")
+    print(f"[sweep] previous : {p3}")
     print(f"[sweep] CHOSEN        : {best}")
     print(ok.sort_values(["auto_share", "auto_queue_accuracy"], ascending=False).head(8).to_string(index=False))
 

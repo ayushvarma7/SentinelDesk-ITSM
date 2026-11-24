@@ -1,6 +1,6 @@
 """Mask PII before any text leaves the machine for an external LLM API.
 
-OWNER: P3. Masks with the dataset's own anonymisation tokens (<email>, <tel_num>,
+Masks with the dataset's own anonymisation tokens (<email>, <tel_num>,
 <acc_num>), so a masked live ticket looks exactly like the training/KB text the
 classifier and retriever were built on.
 """
@@ -74,4 +74,4 @@ def mask(text: str) -> tuple[str, dict[str, int]]:
     return out, counts
 
 
-mask_pii = mask  # name used in the execution plan
+mask_pii = mask  # alias kept for older callers
