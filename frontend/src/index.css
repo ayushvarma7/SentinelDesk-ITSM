@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette from Poornima's Streamlit theme (sentinel_ui/common.py) */
+  --color-navy: #0E1A2B;      /* --ink */
+  --color-navy-2: #172A44;    /* --ink2 */
+  --color-navy-3: #24395A;
+  --color-coral: #C8102E;     /* --accent */
+  --color-coral-dark: #A50D26;
+  --color-canvas: #F3F5F8;    /* --surface */
+  --color-line: #DCE2EA;      /* --line */
+  --color-ink: #1C2735;       /* --text */
+  --color-muted: #5A6A7E;     /* --muted */
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html, body, #root { height: 100%; }
+body { background: var(--color-canvas); color: var(--color-ink); -webkit-font-smoothing: antialiased; }
+
+@keyframes stepIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.step-in { animation: stepIn .35s ease-out both; }
+@keyframes pulseRing { 0% { box-shadow: 0 0 0 0 rgba(200,16,46,.5); } 100% { box-shadow: 0 0 0 10px rgba(200,16,46,0); } }
+.pulse-ring { animation: pulseRing 1.4s ease-out infinite; }
+
+@keyframes toastIn { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+.toast-in { animation: toastIn .25s ease-out both; }
+@keyframes bannerIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+.banner-in { animation: bannerIn .35s ease-out both; }
+@keyframes shimmer { 0% { background-position: -400px 0; } 100% { background-position: 400px 0; } }
+.skeleton { background: linear-gradient(90deg, #e9edf3 0%, #f5f7fa 50%, #e9edf3 100%); background-size: 800px 100%; animation: shimmer 1.2s linear infinite; border-radius: 6px; }
+@keyframes nodePop { 0% { transform: scale(.6); opacity: 0; } 70% { transform: scale(1.08); } 100% { transform: scale(1); opacity: 1; } }
+.node-pop { animation: nodePop .35s ease-out both; }
+
+/* Grammarly-style marks */
+.mark-cite { text-decoration: underline; text-decoration-color: #0E1A2B; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+.mark-unverified { text-decoration: underline wavy #F59E0B; text-decoration-thickness: 1.5px; text-underline-offset: 4px; background: rgba(245, 158, 11, .10); border-radius: 2px; }
+.mark-focus { background: rgba(245, 158, 11, .28); box-shadow: 0 0 0 2px rgba(245, 158, 11, .35); }
+
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+.rise { animation: rise .6s ease-out both; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
