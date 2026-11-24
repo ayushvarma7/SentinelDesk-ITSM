@@ -1,0 +1,11 @@
+ticket_id,true_language,engine,escalated,drafted,has_citation,fake_citation,invented_figures,right_language,right_language_text,placeholder_leak,words,latency_ms
+TKT-24945,en,,True,False,False,False,False,True,True,False,0,60.6
+TKT-27300,en,,True,False,False,False,False,True,True,False,0,59.2
+TKT-25295,en,,True,False,False,False,False,True,True,False,0,55.4
+TKT-23791,en,,True,False,False,False,False,True,True,False,0,52.5
+TKT-26217,en,gemini-3.5-flash-lite,False,True,True,False,False,True,True,False,113,1209.0
+TKT-23281,de,,True,False,False,False,False,True,True,False,0,50.8
+TKT-24393,de,gemini-3.5-flash-lite,False,True,True,False,False,False,True,False,118,4644.2
+TKT-24591,de,,True,False,False,False,False,True,True,False,0,140.9
+TKT-24233,de,gemini-3.5-flash-lite,False,True,True,False,False,False,True,False,156,1183.5
+TKT-25466,de,,True,False,False,False,False,True,True,False,0,37.3

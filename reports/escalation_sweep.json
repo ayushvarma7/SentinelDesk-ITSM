@@ -1,0 +1,26 @@
+{
+  "n_val": 2286,
+  "true_high_incidents": 406,
+  "rule": "high_incident_escalated >= 0.95 and auto_queue_accuracy >= 0.75, then max auto_share",
+  "n_combinations": 1944,
+  "n_meeting_rule": 238,
+  "previous_p3_setting": {
+    "critical": null,
+    "type": 0.75,
+    "queue": 0.5,
+    "priority": 0.7,
+    "auto_share": 0.2305,
+    "high_incident_escalated": 0.9754,
+    "auto_queue_accuracy": 0.8102
+  },
+  "chosen": {
+    "critical": 0.2,
+    "type": 0.0,
+    "queue": 0.5,
+    "priority": 0.0,
+    "auto_share": 0.3749,
+    "high_incident_escalated": 0.9507,
+    "auto_queue_accuracy": 0.7515
+  },
+  "verified_against_gate_evaluate": true
+}

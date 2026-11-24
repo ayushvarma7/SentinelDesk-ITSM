@@ -1,0 +1,15 @@
+{
+  "n": 10,
+  "escalated": 0.7,
+  "drafted": 3,
+  "engine": "gemini-3.5-flash-lite",
+  "has_citation": 1.0,
+  "fake_citation": 0.0,
+  "invented_figures": 0.0,
+  "right_language": 0.333,
+  "right_language_text": 1.0,
+  "placeholder_leak": 0.0,
+  "median_words": 118.0,
+  "p50_latency_ms": 59.900000000000006,
+  "p95_latency_ms": 3098.359999999996
+}

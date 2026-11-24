@@ -1,0 +1,3 @@
+time,C,emb_weight,val_type,val_queue,val_priority,val_language,threshold,val_priority_macro_f1,val_high_recall
+11:54,32.0,1.0,0.8854,0.616,0.6343,0.9691,0.25,0.6066,0.8202
+12:16,32.0,1.0,0.8864,0.6133,0.6334,0.9691,0.25,0.6046,0.8191

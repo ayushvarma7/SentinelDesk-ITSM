@@ -1,0 +1,25 @@
+{
+  "n_val": 2286,
+  "rule": "high_incident_escalated >= 0.95 and auto_share >= 0.25, then max auto_queue_accuracy",
+  "n_meeting_rule": 9,
+  "retrieval": "retrieve.search(include_live=False), own row removed",
+  "top1_sim_percentiles": {
+    "p5": 0.8989,
+    "p10": 0.9066,
+    "p25": 0.9179
+  },
+  "fixed_similarity_floors": {
+    "min_top1_similarity": 0.865,
+    "min_mean_top3_similarity": 0.845
+  },
+  "overall_queue_accuracy": 0.609,
+  "true_high_incidents": 406,
+  "chosen": {
+    "type": 0.75,
+    "queue": 0.5,
+    "priority": 0.7,
+    "auto_share": 0.252,
+    "high_incident_escalated": 0.97,
+    "auto_queue_accuracy": 0.815
+  }
+}

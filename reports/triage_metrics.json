@@ -1,0 +1,268 @@
+{
+  "n_holdout": 5718,
+  "high_threshold": 0.25,
+  "C": 32.0,
+  "type": {
+    "macro_f1": 0.8777,
+    "accuracy": 0.8692,
+    "ece": 0.0276
+  },
+  "queue": {
+    "macro_f1": 0.6109,
+    "accuracy": 0.6142,
+    "ece": 0.0123
+  },
+  "priority": {
+    "macro_f1": 0.6195,
+    "accuracy": 0.6366,
+    "ece": 0.0815
+  },
+  "language": {
+    "macro_f1": 0.9666,
+    "accuracy": 0.9675,
+    "ece": 0.0032
+  },
+  "confusion": {
+    "type": {
+      "labels": [
+        "Incident",
+        "Problem",
+        "Request",
+        "Change"
+      ],
+      "matrix": [
+        [
+          1906,
+          351,
+          0,
+          2
+        ],
+        [
+          361,
+          851,
+          1,
+          3
+        ],
+        [
+          3,
+          1,
+          1624,
+          8
+        ],
+        [
+          6,
+          2,
+          10,
+          589
+        ]
+      ]
+    },
+    "priority": {
+      "labels": [
+        "high",
+        "medium",
+        "low"
+      ],
+      "matrix": [
+        [
+          1836,
+          278,
+          117
+        ],
+        [
+          885,
+          1206,
+          222
+        ],
+        [
+          344,
+          232,
+          598
+        ]
+      ]
+    },
+    "queue": {
+      "labels": [
+        "Billing and Payments",
+        "Customer Service",
+        "General Inquiry",
+        "Human Resources",
+        "IT Support",
+        "Product Support",
+        "Returns and Exchanges",
+        "Sales and Pre-Sales",
+        "Service Outages and Maintenance",
+        "Technical Support"
+      ],
+      "matrix": [
+        [
+          447,
+          40,
+          1,
+          1,
+          7,
+          20,
+          7,
+          4,
+          1,
+          32
+        ],
+        [
+          24,
+          483,
+          0,
+          4,
+          60,
+          101,
+          12,
+          15,
+          6,
+          152
+        ],
+        [
+          2,
+          13,
+          34,
+          0,
+          8,
+          7,
+          2,
+          5,
+          0,
+          16
+        ],
+        [
+          3,
+          15,
+          0,
+          51,
+          4,
+          18,
+          3,
+          1,
+          1,
+          17
+        ],
+        [
+          14,
+          63,
+          2,
+          2,
+          350,
+          64,
+          6,
+          2,
+          9,
+          180
+        ],
+        [
+          14,
+          122,
+          2,
+          2,
+          70,
+          590,
+          16,
+          7,
+          3,
+          214
+        ],
+        [
+          7,
+          33,
+          2,
+          0,
+          4,
+          40,
+          147,
+          3,
+          0,
+          35
+        ],
+        [
+          11,
+          21,
+          1,
+          1,
+          0,
+          19,
+          10,
+          99,
+          4,
+          26
+        ],
+        [
+          3,
+          3,
+          0,
+          0,
+          15,
+          9,
+          4,
+          1,
+          174,
+          32
+        ],
+        [
+          19,
+          121,
+          2,
+          4,
+          121,
+          210,
+          18,
+          12,
+          21,
+          1137
+        ]
+      ]
+    }
+  },
+  "per_language": {
+    "en": {
+      "n": 3283,
+      "type": 0.9011,
+      "queue": 0.693,
+      "priority": 0.689
+    },
+    "de": {
+      "n": 2435,
+      "type": 0.8464,
+      "queue": 0.4905,
+      "priority": 0.522
+    }
+  },
+  "high_priority_incident": {
+    "support": 995,
+    "recall_predicted_high": 0.8523,
+    "recall_predicted_high_and_incident": 0.7729,
+    "recall_gate_hard_rule": 0.8503,
+    "gate_hard_rule_types": [
+      "Incident",
+      "Problem"
+    ],
+    "share_of_tickets_hard_escalated": 0.3419
+  },
+  "pipeline": {
+    "n_sampled": 200,
+    "auto_draft_share": 0.395,
+    "high_incident_support": 41,
+    "high_incident_escalated_by_gate": 0.9024,
+    "top1_same_queue": 0.67,
+    "top1_same_queue_auto_drafted": 0.7595,
+    "median_top1_similarity": 0.9385,
+    "cross_lingual_share_forced": 1.0,
+    "cross_lingual_share_unaided": 0.32,
+    "status_share": {
+      "AUTO_DRAFT_READY": 0.395,
+      "HUMAN_REVIEW": 0.235,
+      "ESCALATE_ONCALL": 0.37
+    },
+    "draft_share": 0.61,
+    "high_incident_sent_oncall": 0.8537,
+    "latency_ms_p50_all": 184.8,
+    "latency_ms_p95_all": 1129.1,
+    "latency_ms_p50_drafted": 241.3,
+    "latency_ms_p95_drafted": 1219.9
+  }
+}

@@ -1,0 +1,14 @@
+.venv/
+venv/
+__pycache__/
+*.pyc
+data/
+artifacts/
+.env
+.DS_Store
+.ipynb_checkpoints/
+brag-output/
+
+# local tooling and planning files
+.claude/
+/SentinelDesk complete execution plan*.pdf

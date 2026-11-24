@@ -1,0 +1,69 @@
+{
+  "rule": "max DE queue+priority; EN queue+priority and type (each lang) within 0.005 of G0",
+  "results": {
+    "G0": {
+      "en": {
+        "type": 0.906,
+        "queue": 0.7085,
+        "priority": 0.6919
+      },
+      "de": {
+        "type": 0.8569,
+        "queue": 0.5018,
+        "priority": 0.5592
+      }
+    },
+    "G1": {
+      "en": {
+        "type": 0.8913,
+        "queue": 0.7047,
+        "priority": 0.6884
+      },
+      "de": {
+        "type": 0.8515,
+        "queue": 0.5073,
+        "priority": 0.5584
+      }
+    },
+    "G2": {
+      "en": {
+        "type": 0.8898,
+        "queue": 0.698,
+        "priority": 0.683
+      },
+      "de": {
+        "type": 0.8319,
+        "queue": 0.4722,
+        "priority": 0.5356
+      }
+    },
+    "G3": {
+      "en": {
+        "type": 0.8831,
+        "queue": 0.6927,
+        "priority": 0.6744
+      },
+      "de": {
+        "type": 0.8416,
+        "queue": 0.466,
+        "priority": 0.5236
+      }
+    }
+  },
+  "eligible": [
+    "G0"
+  ],
+  "chosen": "G0",
+  "neighbour_label_agreement": {
+    "en": {
+      "type": 0.904,
+      "queue": 0.767,
+      "priority": 0.799
+    },
+    "de": {
+      "type": 0.817,
+      "queue": 0.56,
+      "priority": 0.634
+    }
+  }
+}
