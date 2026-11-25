@@ -6,9 +6,9 @@ In a busy queue, a real outage can sit behind a hundred password resets, and AI 
 or fixes create more incidents than they close. SentinelDesk classifies and routes every ticket, escalates outages
 with a one-line reason, and drafts replies only when past resolved tickets back them up.
 
-[![Watch the 2-minute SentinelDesk walkthrough on YouTube](docs/demo-thumbnail.jpg)](https://youtu.be/RBENYYlmL4Q)
+[![Watch the 2-minute SentinelDesk walkthrough on YouTube](docs/demo-thumbnail.jpg)](https://youtu.be/t665aLCuyYk)
 
-<p align="center"><b>▶ <a href="https://youtu.be/RBENYYlmL4Q">Watch the 2-minute walkthrough on YouTube</a></b></p>
+<p align="center"><b>▶ <a href="https://youtu.be/t665aLCuyYk">Watch the 2-minute walkthrough on YouTube</a></b></p>
 
 ![Overview](docs/screenshots/overview.jpg)
 
